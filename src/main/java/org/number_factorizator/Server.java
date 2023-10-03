@@ -1,23 +1,19 @@
-package org.client_requests_simulator;
+package org.number_factorizator;
 
+
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Random;
 
 import static java.lang.System.exit;
 
-public class ClientRequestsSimulator {
-    private final String address = "localhost";
+public class Server {
     private final int port = 5000;
+    private ServerSocket serverSocket = null;
     private Socket socket = null;
     private DataInputStream input = null;
-    private DataOutputStream output = null;
-
-    public Long simulateRequestData() {
-        return Math.abs(new Random().nextLong());
-    }
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -25,26 +21,27 @@ public class ClientRequestsSimulator {
             exit(1);
         }
 
-        ClientRequestsSimulator crs = new ClientRequestsSimulator();
-        crs.simulateTraffic();
-        crs.closeConnection();
+        Server server = new Server();
+        server.serve();
+        server.closeServer();
     }
 
-    private void simulateTraffic() {
+    private void serve() {
         try {
-            socket = new Socket(address, port);
-            input = new DataInputStream(System.in);
-            output = new DataOutputStream(socket.getOutputStream());
+            serverSocket = new ServerSocket(port);
+            socket = serverSocket.accept();
+            handleRequestData();
+            closeConnection();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        writeRequestData();
     }
 
-    private void writeRequestData() {
+    private void handleRequestData() {
         try {
-            output.writeLong(simulateRequestData());
+            input = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            Long number = input.readLong();
+            System.out.println(number);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -53,8 +50,16 @@ public class ClientRequestsSimulator {
     private void closeConnection() {
         try {
             input.close();
-            output.close();
             socket.close();
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void closeServer() {
+        try {
+            serverSocket.close();
         }
         catch (IOException e) {
             System.out.println(e.getMessage());
