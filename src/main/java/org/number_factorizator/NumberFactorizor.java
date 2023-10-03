@@ -3,14 +3,14 @@ package org.number_factorizator;
 import java.util.ArrayList;
 
 public class NumberFactorizor {
-    public ArrayList<Integer> factorize(int inputNumber) {
-        ArrayList<Integer> result = new ArrayList<>();
-        if (inputNumber >= 1) {
-            result.add(1);
+    public ArrayList<Long> factorize(long inputNumber) {
+        ArrayList<Long> result = new ArrayList<>();
+        if (inputNumber >= 1L) {
+            result.add(1L);
         }
-        for (int i = 2; i <= inputNumber; i += 1) {
+        for (long i = 2; i <= inputNumber; i += 1) {
             if(isPrime(i)) {
-                int currentValue = inputNumber;
+                long currentValue = inputNumber;
                 while (currentValue % i == 0) {
                     result.add(i);
                     currentValue /= i;
@@ -20,7 +20,7 @@ public class NumberFactorizor {
         return result;
     }
 
-    public boolean isPrime(int inputNumber) {
+    public boolean isPrime(long inputNumber) {
         if (inputNumber < 2) {
             return false;
         }
@@ -29,7 +29,7 @@ public class NumberFactorizor {
             return false;
         }
 
-        for (int i = 3; i < Math.sqrt(inputNumber); i += 2) {
+        for (long i = 3; i < Math.sqrt(inputNumber); i += 2) {
             if (inputNumber % i == 0) {
                 return false;
             }
@@ -38,7 +38,7 @@ public class NumberFactorizor {
         return true;
     }
 
-    private static boolean isCompositeEvenNumber(int inputNumber) {
+    private static boolean isCompositeEvenNumber(long inputNumber) {
         return inputNumber > 2 && inputNumber % 2 == 0;
     }
 }
