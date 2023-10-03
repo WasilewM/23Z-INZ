@@ -1,4 +1,4 @@
-package org.numberfactorizator;
+package org.number_factorizator;
 
 import java.util.ArrayList;
 
