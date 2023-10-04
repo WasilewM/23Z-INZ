@@ -9,7 +9,10 @@ public class Main {
             exit(1);
         }
 
-        ClientRequestsSimulator crs = new ClientRequestsSimulator();
+        String address = args[0];
+        String port = args[1];
+
+        ClientRequestsSimulator crs = new ClientRequestsSimulator(address, port);
         crs.simulateTraffic();
         crs.closeConnection();
     }

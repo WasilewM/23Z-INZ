@@ -5,11 +5,16 @@ import java.net.Socket;
 import java.util.Random;
 
 public class ClientRequestsSimulator {
-    private final String address = "localhost";
-    private final int port = 5000;
+    private final String address;
+    private final int port;
     private Socket socket = null;
     private DataInputStream input = null;
     private DataOutputStream output = null;
+
+    public ClientRequestsSimulator(String address, String port) {
+        this.address = address;
+        this.port = parsePortNumber(port);
+    }
 
     public void simulateTraffic() {
         try {
@@ -31,6 +36,18 @@ public class ClientRequestsSimulator {
         catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+
+    private static Integer parsePortNumber(String port) {
+        int portNumber;
+        try {
+            portNumber = Integer.parseInt(port);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
+
+        return portNumber;
     }
 
     private void writeRequestData() {
