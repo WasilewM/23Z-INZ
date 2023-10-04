@@ -1,9 +1,7 @@
 package org.number_factorizator;
 
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -11,9 +9,18 @@ import static java.lang.System.exit;
 
 public class Server {
     private final int port = 5000;
-    private ServerSocket serverSocket = null;
+    private final ServerSocket serverSocket;
     private Socket socket = null;
     private DataInputStream input = null;
+    private DataOutputStream output = null;
+
+    public Server() {
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -27,29 +34,36 @@ public class Server {
     }
 
     private void serve() {
-        try {
-            serverSocket = new ServerSocket(port);
-            socket = serverSocket.accept();
-            handleRequestData();
-            closeConnection();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        boolean shouldContinue = true;
+        while (shouldContinue) {
+            try {
+                socket = serverSocket.accept();
+                long requestedNumber = readRequestData();
+                output = new DataOutputStream(socket.getOutputStream());
+                output.writeLong(requestedNumber);
+                closeConnection();
+            } catch (IOException e) {
+                shouldContinue = false;
+            }
         }
     }
 
-    private void handleRequestData() {
+    private Long readRequestData() {
+        Long requestedNumber = null;
         try {
             input = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            Long number = input.readLong();
-            System.out.println(number);
+            requestedNumber = input.readLong();
+            System.out.println("Requested number: " + requestedNumber);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return requestedNumber;
     }
 
     private void closeConnection() {
         try {
             input.close();
+            output.close();
             socket.close();
         }
         catch (IOException e) {
