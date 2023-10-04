@@ -7,18 +7,15 @@ import java.net.Socket;
 
 
 public class Server {
-    private final int port = 5000;
+    private final int port;
     private final ServerSocket serverSocket;
     private Socket socket = null;
     private DataInputStream input = null;
     private DataOutputStream output = null;
 
-    public Server() {
-        try {
-            serverSocket = new ServerSocket(port);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public Server(String port) {
+        this.port = parsePortNumber(port);
+        serverSocket = initServerSocket();
     }
 
     public void serve() {
@@ -45,8 +42,29 @@ public class Server {
         }
     }
 
+    private ServerSocket initServerSocket() {
+        final ServerSocket serverSocket;
+        try {
+            serverSocket = new ServerSocket(this.port);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return serverSocket;
+    }
+
+    private static Integer parsePortNumber(String port) {
+        int portNumber;
+        try {
+            portNumber = Integer.parseInt(port);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException(e);
+        }
+
+        return portNumber;
+    }
+
     private Long readRequestData() {
-        Long requestedNumber = null;
+        long requestedNumber;
         try {
             input = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             requestedNumber = input.readLong();
