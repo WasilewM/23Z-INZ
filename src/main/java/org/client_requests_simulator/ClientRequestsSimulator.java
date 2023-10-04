@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Random;
 
-import static java.lang.System.exit;
-
 public class ClientRequestsSimulator {
     private final String address = "localhost";
     private final int port = 5000;
@@ -13,22 +11,7 @@ public class ClientRequestsSimulator {
     private DataInputStream input = null;
     private DataOutputStream output = null;
 
-    public static void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("Invalid number of arguments. Expected 2 but received " + args.length);
-            exit(1);
-        }
-
-        ClientRequestsSimulator crs = new ClientRequestsSimulator();
-        crs.simulateTraffic();
-        crs.closeConnection();
-    }
-
-    public Long simulateRequestData() {
-        return Math.abs(new Random().nextLong());
-    }
-
-    private void simulateTraffic() {
+    public void simulateTraffic() {
         try {
             socket = new Socket(address, port);
         } catch (IOException e) {
@@ -37,6 +20,17 @@ public class ClientRequestsSimulator {
 
         writeRequestData();
         readResponseData();
+    }
+
+    public void closeConnection() {
+        try {
+            input.close();
+            output.close();
+            socket.close();
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void writeRequestData() {
@@ -51,23 +45,16 @@ public class ClientRequestsSimulator {
         }
     }
 
+    private Long simulateRequestData() {
+        return Math.abs(new Random().nextLong());
+    }
+
     private void readResponseData() {
         try {
             input = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             System.out.println("Received: " + input.readLong());
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private void closeConnection() {
-        try {
-            input.close();
-            output.close();
-            socket.close();
-        }
-        catch (IOException e) {
-            System.out.println(e.getMessage());
         }
     }
 }
