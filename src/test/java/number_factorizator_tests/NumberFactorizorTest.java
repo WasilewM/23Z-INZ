@@ -1,5 +1,7 @@
+package number_factorizator_tests;
+
 import org.junit.Test;
-import org.numberfactorizator.NumberFactorizor;
+import org.number_factorizator.NumberFactorizor;
 
 import java.util.ArrayList;
 
@@ -10,24 +12,24 @@ public class NumberFactorizorTest
     @Test
     public void givenFactorizeMethod_whenCalledWithZero_thenEmptyListIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
-        int inputNumber = 0;
-        ArrayList<Integer> expectedResult = new ArrayList<>();
+        long inputNumber = 0L;
+        ArrayList<Long> expectedResult = new ArrayList<>();
         assertEquals(expectedResult, nf.factorize(inputNumber));
     }
 
     @Test
     public void givenFactorizeMethod_whenCalledWithNegativeNumber_thenEmptyListIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
-        int inputNumber = -1;
-        ArrayList<Integer> expectedResult = new ArrayList<>();
+        long inputNumber = -1L;
+        ArrayList<Long> expectedResult = new ArrayList<>();
         assertEquals(expectedResult, nf.factorize(inputNumber));
     }
 
     @Test
     public void givenFactorizeMethod_whenCalledWithOne_thenListWithOneIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
-        int inputNumber = 1;
-        ArrayList<Integer> expectedResult = new ArrayList<>();
+        long inputNumber = 1L;
+        ArrayList<Long> expectedResult = new ArrayList<>();
         expectedResult.add(inputNumber);
 
         assertEquals(expectedResult, nf.factorize(inputNumber));
@@ -36,9 +38,9 @@ public class NumberFactorizorTest
     @Test
     public void givenFactorizeMethod_whenCalledWithPrimeNumber_thenListWithOneAndThisPrimeIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
-        int inputNumber = 61;
-        ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
+        long inputNumber = 61L;
+        ArrayList<Long> expectedResult = new ArrayList<>();
+        expectedResult.add(1L);
         expectedResult.add(inputNumber);
 
         assertEquals(expectedResult, nf.factorize(inputNumber));
@@ -47,11 +49,11 @@ public class NumberFactorizorTest
     @Test
     public void givenFactorizeMethod_whenCalledWithSix_thenListWithOneTwoAndThreeIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
-        int inputNumber = 6;
-        ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
-        expectedResult.add(2);
-        expectedResult.add(3);
+        long inputNumber = 6L;
+        ArrayList<Long> expectedResult = new ArrayList<>();
+        expectedResult.add(1L);
+        expectedResult.add(2L);
+        expectedResult.add(3L);
 
         assertEquals(expectedResult, nf.factorize(inputNumber));
     }
@@ -59,13 +61,13 @@ public class NumberFactorizorTest
     @Test
     public void givenFactorizeMethod_whenCalledWithSixteen_thenListWithValidNumberOfPrimesIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
-        int inputNumber = 16;
-        ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
-        expectedResult.add(2);
-        expectedResult.add(2);
-        expectedResult.add(2);
-        expectedResult.add(2);
+        long inputNumber = 16L;
+        ArrayList<Long> expectedResult = new ArrayList<>();
+        expectedResult.add(1L);
+        expectedResult.add(2L);
+        expectedResult.add(2L);
+        expectedResult.add(2L);
+        expectedResult.add(2L);
 
         assertEquals(expectedResult, nf.factorize(inputNumber));
     }
