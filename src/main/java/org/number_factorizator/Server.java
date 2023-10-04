@@ -5,7 +5,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import static java.lang.System.exit;
 
 public class Server {
     private final int port = 5000;
@@ -22,18 +21,7 @@ public class Server {
         }
     }
 
-    public static void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("Invalid number of arguments. Expected 2 but received " + args.length);
-            exit(1);
-        }
-
-        Server server = new Server();
-        server.serve();
-        server.closeServer();
-    }
-
-    private void serve() {
+    public void serve() {
         boolean shouldContinue = true;
         while (shouldContinue) {
             try {
@@ -45,6 +33,15 @@ public class Server {
             } catch (IOException e) {
                 shouldContinue = false;
             }
+        }
+    }
+
+    public void closeServer() {
+        try {
+            serverSocket.close();
+        }
+        catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -65,15 +62,6 @@ public class Server {
             input.close();
             output.close();
             socket.close();
-        }
-        catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void closeServer() {
-        try {
-            serverSocket.close();
         }
         catch (IOException e) {
             System.out.println(e.getMessage());
