@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class ClientRequestsSimulator {
     private final int port;
-    private final int request;
+    private final int max_request_value;
     private final String address;
     private Socket socket = null;
     private DataInputStream input = null;
@@ -16,7 +16,7 @@ public class ClientRequestsSimulator {
     public ClientRequestsSimulator(String address, String port) {
         this.address = address;
         this.port = parsePortNumber(port);
-        this.request = Integer.MAX_VALUE / 1000;
+        this.max_request_value = Integer.MAX_VALUE / 1000;
     }
 
     public void simulateTraffic() {
@@ -26,8 +26,8 @@ public class ClientRequestsSimulator {
             throw new RuntimeException(e);
         }
 
-        writeRequestData();
-        readResponseData();
+        sendRequestData();
+        readResponse();
     }
 
     public void closeConnection() {
@@ -41,7 +41,6 @@ public class ClientRequestsSimulator {
         }
     }
 
-
     private static Integer parsePortNumber(String port) {
         int portNumber;
         try {
@@ -53,11 +52,11 @@ public class ClientRequestsSimulator {
         return portNumber;
     }
 
-    private void writeRequestData() {
+    private void sendRequestData() {
         try {
             input = new DataInputStream(System.in);
             output = new DataOutputStream(socket.getOutputStream());
-            int request = simulateRequestData();
+            int request = createRandomRequest();
             output.writeInt(request);
             System.out.println("Sent: " + request);
         } catch (IOException e) {
@@ -65,11 +64,11 @@ public class ClientRequestsSimulator {
         }
     }
 
-    private Integer simulateRequestData() {
-        return Math.abs(new Random().nextInt() % (request));
+    private Integer createRandomRequest() {
+        return Math.abs(new Random().nextInt() % (max_request_value));
     }
 
-    private void readResponseData() {
+    private void readResponse() {
         try {
             input = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             ArrayList<Integer> factorizationSolution = new ArrayList<>();
