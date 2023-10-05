@@ -2,11 +2,13 @@ package org.client_requests_simulator;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class ClientRequestsSimulator {
-    private final String address;
     private final int port;
+    private final int request;
+    private final String address;
     private Socket socket = null;
     private DataInputStream input = null;
     private DataOutputStream output = null;
@@ -14,6 +16,7 @@ public class ClientRequestsSimulator {
     public ClientRequestsSimulator(String address, String port) {
         this.address = address;
         this.port = parsePortNumber(port);
+        this.request = Integer.MAX_VALUE / 1000;
     }
 
     public void simulateTraffic() {
@@ -54,22 +57,28 @@ public class ClientRequestsSimulator {
         try {
             input = new DataInputStream(System.in);
             output = new DataOutputStream(socket.getOutputStream());
-            long request = simulateRequestData();
-            output.writeLong(request);
+            int request = simulateRequestData();
+            output.writeInt(request);
             System.out.println("Sent: " + request);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Long simulateRequestData() {
-        return Math.abs(new Random().nextLong());
+    private Integer simulateRequestData() {
+        return Math.abs(new Random().nextInt() % (request));
     }
 
     private void readResponseData() {
         try {
             input = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            System.out.println("Received: " + input.readLong());
+            ArrayList<Integer> factorizationSolution = new ArrayList<>();
+            int numsLeftToRead = input.readInt();
+            while (numsLeftToRead > 0) {
+                factorizationSolution.add(input.readInt());
+                numsLeftToRead -= 1;
+            }
+            System.out.println("Received: " + factorizationSolution);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

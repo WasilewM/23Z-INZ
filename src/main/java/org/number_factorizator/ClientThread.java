@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ClientThread extends Thread {
     private final Socket socket;
@@ -18,8 +19,11 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try {
-            long requestedNumber = readRequest();
-            sendResponse(requestedNumber);
+            int requestedNumber = readRequest();
+            System.out.println("requestedNumber: " + requestedNumber);
+            ArrayList<Integer> factorizationSolution = createResponse(requestedNumber);
+            System.out.println("factorizationSolution: " + factorizationSolution);
+            sendResponse(factorizationSolution);
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -27,11 +31,11 @@ public class ClientThread extends Thread {
         }
     }
 
-    private Long readRequest() {
-        long requestedNumber;
+    private Integer readRequest() {
+        int requestedNumber;
         try {
             inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            requestedNumber = inputStream.readLong();
+            requestedNumber = inputStream.readInt();
             System.out.println("Requested number: " + requestedNumber);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -39,9 +43,17 @@ public class ClientThread extends Thread {
         return requestedNumber;
     }
 
-    private void sendResponse(long requestedNumber) throws IOException {
+    private static ArrayList<Integer> createResponse(int requestedNumber) {
+        NumberFactorizor nf = new NumberFactorizor();
+        return nf.factorize(requestedNumber);
+    }
+
+    private void sendResponse(ArrayList<Integer> factorizationSolution) throws IOException {
         outputStream = new DataOutputStream(socket.getOutputStream());
-        outputStream.writeLong(requestedNumber);
+        outputStream.writeInt(factorizationSolution.size());
+        for (int num : factorizationSolution) {
+            outputStream.writeInt(num);
+        }
     }
 
     private void closeConnection() {
