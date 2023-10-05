@@ -9,9 +9,6 @@ import java.net.Socket;
 public class Server {
     private final int port;
     private final ServerSocket serverSocket;
-    private Socket socket = null;
-    private DataInputStream input = null;
-    private DataOutputStream output = null;
 
     public Server(String port) {
         this.port = parsePortNumber(port);
@@ -22,34 +19,12 @@ public class Server {
         boolean shouldContinue = true;
         while (shouldContinue) {
             try {
-                socket = serverSocket.accept();
-                long requestedNumber = readRequestData();
-                output = new DataOutputStream(socket.getOutputStream());
-                output.writeLong(requestedNumber);
-                closeConnection();
+                Socket socket = serverSocket.accept();
+                new ClientThread(socket).start();
             } catch (IOException e) {
                 shouldContinue = false;
             }
         }
-    }
-
-    public void closeServer() {
-        try {
-            serverSocket.close();
-        }
-        catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private ServerSocket initServerSocket() {
-        final ServerSocket serverSocket;
-        try {
-            serverSocket = new ServerSocket(this.port);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return serverSocket;
     }
 
     private static Integer parsePortNumber(String port) {
@@ -63,23 +38,19 @@ public class Server {
         return portNumber;
     }
 
-    private Long readRequestData() {
-        long requestedNumber;
+    private ServerSocket initServerSocket() {
+        final ServerSocket serverSocket;
         try {
-            input = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            requestedNumber = input.readLong();
-            System.out.println("Requested number: " + requestedNumber);
+            serverSocket = new ServerSocket(this.port);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return requestedNumber;
+        return serverSocket;
     }
 
-    private void closeConnection() {
+    public void closeServer() {
         try {
-            input.close();
-            output.close();
-            socket.close();
+            serverSocket.close();
         }
         catch (IOException e) {
             System.out.println(e.getMessage());
