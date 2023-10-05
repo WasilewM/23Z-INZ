@@ -1,5 +1,7 @@
 package org.client_request_simulator;
 
+import org.common.PortParser;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ public class ClientRequestSimulator {
 
     public ClientRequestSimulator(String address, String port) {
         this.address = address;
-        this.port = parsePortNumber(port);
+        this.port = PortParser.parsePortNumber(port);
         this.max_request_value = Integer.MAX_VALUE / 1000;
     }
 
@@ -39,17 +41,6 @@ public class ClientRequestSimulator {
         catch (IOException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    private static Integer parsePortNumber(String port) {
-        int portNumber;
-        try {
-            portNumber = Integer.parseInt(port);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
-        }
-
-        return portNumber;
     }
 
     private void sendRequestData() {

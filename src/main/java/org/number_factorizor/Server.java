@@ -1,6 +1,8 @@
 package org.number_factorizor;
 
 
+import org.common.PortParser;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -11,7 +13,7 @@ public class Server {
     private final ServerSocket serverSocket;
 
     public Server(String port) {
-        this.port = parsePortNumber(port);
+        this.port = PortParser.parsePortNumber(port);
         serverSocket = initServerSocket();
     }
 
@@ -25,17 +27,6 @@ public class Server {
                 shouldContinue = false;
             }
         }
-    }
-
-    private static Integer parsePortNumber(String port) {
-        int portNumber;
-        try {
-            portNumber = Integer.parseInt(port);
-        } catch (NumberFormatException e) {
-            throw new RuntimeException(e);
-        }
-
-        return portNumber;
     }
 
     private ServerSocket initServerSocket() {
