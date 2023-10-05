@@ -1,11 +1,11 @@
-package org.client_requests_simulator;
+package org.client_request_simulator;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ClientRequestsSimulator {
+public class ClientRequestSimulator {
     private final int port;
     private final int max_request_value;
     private final String address;
@@ -13,7 +13,7 @@ public class ClientRequestsSimulator {
     private DataInputStream input = null;
     private DataOutputStream output = null;
 
-    public ClientRequestsSimulator(String address, String port) {
+    public ClientRequestSimulator(String address, String port) {
         this.address = address;
         this.port = parsePortNumber(port);
         this.max_request_value = Integer.MAX_VALUE / 1000;
