@@ -15,10 +15,10 @@ public class ClientRequestSimulator {
     private DataInputStream input = null;
     private DataOutputStream output = null;
 
-    public ClientRequestSimulator(String address, String port) {
+    public ClientRequestSimulator(String address, String port, int max_request_value) {
         this.address = address;
         this.port = PortParser.parsePortNumber(port);
-        this.max_request_value = Integer.MAX_VALUE / 1000;
+        this.max_request_value = max_request_value;
     }
 
     public void simulateTraffic() {

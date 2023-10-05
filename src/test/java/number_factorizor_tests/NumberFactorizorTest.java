@@ -18,11 +18,35 @@ public class NumberFactorizorTest
     }
 
     @Test
-    public void givenFactorizeMethod_whenCalledWithNegativeNumber_thenEmptyListIsReturned() {
+    public void givenFactorizeMethod_whenCalledWithNegativeNumber_thenIllegalArgumentExceptionIsThrown() {
         NumberFactorizor nf = new NumberFactorizor();
         int inputNumber = -1;
-        ArrayList<Integer> expectedResult = new ArrayList<>();
-        assertEquals(expectedResult, nf.factorize(inputNumber));
+        boolean exceptionCaught = false;
+        try {
+            nf.factorize(inputNumber);
+        } catch (IllegalArgumentException e) {
+            exceptionCaught = true;
+            String msg = "Expected number in range 0 - " + NumberFactorizor.FACTORIZATION_RANGE;
+            msg += ", but received \"-1\"";
+            assertEquals(msg, e.getMessage());
+        }
+        assertTrue(exceptionCaught);
+    }
+
+    @Test
+    public void givenFactorizeMethod_whenCalledWithNumberExceedingTheRange_thenEmptyListIsReturned() {
+        NumberFactorizor nf = new NumberFactorizor();
+        int aboveRange = NumberFactorizor.FACTORIZATION_RANGE + 1;
+        boolean exceptionCaught = false;
+        try {
+            nf.factorize(aboveRange);
+        } catch (IllegalArgumentException e) {
+            exceptionCaught = true;
+            String msg = "Expected number in range 0 - " + NumberFactorizor.FACTORIZATION_RANGE;
+            msg += ", but received \"" + aboveRange + "\"";
+            assertEquals(msg, e.getMessage());
+        }
+        assertTrue(exceptionCaught);
     }
 
     @Test
@@ -75,7 +99,7 @@ public class NumberFactorizorTest
     @Test
     public void givenFactorizeMethod_whenCalledWithBigNumber_thenListWithValidNumberOfPrimesIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
-        int inputNumber = Integer.MAX_VALUE / 1000;
+        int inputNumber = 2147483;
         ArrayList<Integer> expectedResult = new ArrayList<>();
         expectedResult.add(1);
         expectedResult.add(13);
@@ -83,6 +107,19 @@ public class NumberFactorizorTest
         expectedResult.add(97);
         expectedResult.add(131);
         expectedResult.add(169);
+
+        assertEquals(expectedResult, nf.factorize(inputNumber));
+    }
+
+    @Test
+    public void givenFactorizeMethod_whenCalledMaxNumber_thenListWithValidNumberOfPrimesIsReturned() {
+        NumberFactorizor nf = new NumberFactorizor();
+        int inputNumber = NumberFactorizor.FACTORIZATION_RANGE;
+        ArrayList<Integer> expectedResult = new ArrayList<>();
+        expectedResult.add(1);
+        expectedResult.add(2);
+        expectedResult.add(173);
+        expectedResult.add(31033);
 
         assertEquals(expectedResult, nf.factorize(inputNumber));
     }
