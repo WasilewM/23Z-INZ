@@ -1,4 +1,4 @@
-package org.number_factorizator;
+package org.number_factorizor;
 
 
 import java.io.*;

@@ -1,7 +1,7 @@
-package number_factorizator_tests;
+package number_factorizor_tests;
 
 import org.junit.Test;
-import org.number_factorizator.NumberFactorizor;
+import org.number_factorizor.NumberFactorizor;
 
 import java.util.ArrayList;
 
