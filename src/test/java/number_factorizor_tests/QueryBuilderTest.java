@@ -11,18 +11,18 @@ import static org.junit.Assert.assertTrue;
 
 public class QueryBuilderTest {
     @Test
-    public void givenPrepareSelectQueryMethod_whenAskedForAllTableRows_thenSelectAllFromTableQueryIsPrepared() {
+    public void givenBuildSelectQueryMethod_whenAskedForAllTableRows_thenSelectAllFromTableQueryIsPrepared() {
         QueryBuilder queryBuilder = new QueryBuilder();
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add("*");
         String tableName = "table1";
         String expectedQuery = "SELECT * FROM table1";
 
-        assertEquals(expectedQuery, queryBuilder.prepareSelectQuery(columnNames, tableName).toString());
+        assertEquals(expectedQuery, queryBuilder.buildSelectQuery(columnNames, tableName).toString());
     }
 
     @Test
-    public void givenPrepareSelectQueryMethod_whenAskedForTwoSpecificTableColumns_thenSelectAllFromTableQueryIsPrepared() {
+    public void givenBuildSelectQueryMethod_whenAskedForTwoSpecificTableColumns_thenSelectAllFromTableQueryIsPrepared() {
         QueryBuilder queryBuilder = new QueryBuilder();
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add("col1");
@@ -31,11 +31,11 @@ public class QueryBuilderTest {
 
         String expectedQuery = "SELECT col1, col2 FROM table1";
 
-        assertEquals(expectedQuery, queryBuilder.prepareSelectQuery(columnNames, tableName).toString());
+        assertEquals(expectedQuery, queryBuilder.buildSelectQuery(columnNames, tableName).toString());
     }
 
     @Test
-    public void givenPrepareSelectQueryMethod_whenKeysArrayListDoesNotMatchOtherListsSizes_thenIllegalArgumentExceptionIsThrown() {
+    public void givenBuildSelectQueryMethod_whenKeysArrayListDoesNotMatchOtherListsSizes_thenIllegalArgumentExceptionIsThrown() {
         QueryBuilder queryBuilder = new QueryBuilder();
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add("col1");
@@ -48,7 +48,7 @@ public class QueryBuilderTest {
 
         boolean exceptionCaught = false;
         try {
-            queryBuilder.prepareSelectQuery(columnNames, tableName, keys, valuesTypes, values);
+            queryBuilder.buildSelectQuery(columnNames, tableName, keys, valuesTypes, values);
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "ArrayLists keys, valuesTypes and values have to be of equal size");
             exceptionCaught = true;
@@ -59,7 +59,7 @@ public class QueryBuilderTest {
 
 
     @Test
-    public void givenPrepareSelectQueryMethod_whenValuesTypesArrayListDoesNotMatchOtherListsSizes_thenIllegalArgumentExceptionIsThrown() {
+    public void givenBuildSelectQueryMethod_whenValuesTypesArrayListDoesNotMatchOtherListsSizes_thenIllegalArgumentExceptionIsThrown() {
         QueryBuilder queryBuilder = new QueryBuilder();
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add("col1");
@@ -73,7 +73,7 @@ public class QueryBuilderTest {
 
         boolean exceptionCaught = false;
         try {
-            queryBuilder.prepareSelectQuery(columnNames, tableName, keys, valuesTypes, values);
+            queryBuilder.buildSelectQuery(columnNames, tableName, keys, valuesTypes, values);
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "ArrayLists keys, valuesTypes and values have to be of equal size");
             exceptionCaught = true;
@@ -82,7 +82,7 @@ public class QueryBuilderTest {
     }
 
     @Test
-    public void givenPrepareSelectQueryMethod_whenValuesArrayListDoesNotMatchOtherListsSizes_thenIllegalArgumentExceptionIsThrown() {
+    public void givenBuildSelectQueryMethod_whenValuesArrayListDoesNotMatchOtherListsSizes_thenIllegalArgumentExceptionIsThrown() {
         QueryBuilder queryBuilder = new QueryBuilder();
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add("col1");
@@ -96,7 +96,7 @@ public class QueryBuilderTest {
 
         boolean exceptionCaught = false;
         try {
-            queryBuilder.prepareSelectQuery(columnNames, tableName, keys, valuesTypes, values);
+            queryBuilder.buildSelectQuery(columnNames, tableName, keys, valuesTypes, values);
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "ArrayLists keys, valuesTypes and values have to be of equal size");
             exceptionCaught = true;
@@ -105,7 +105,7 @@ public class QueryBuilderTest {
     }
 
     @Test
-    public void givenPrepareSelectQueryMethod_whenCalledWithEqualNumberOfKeysAndValues_thenSelectWithWhereClauseIsPrepared() {
+    public void givenBuildSelectQueryMethod_whenCalledWithEqualNumberOfKeysAndValues_thenSelectWithWhereClauseIsPrepared() {
         QueryBuilder queryBuilder = new QueryBuilder();
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add("col1");
@@ -120,11 +120,11 @@ public class QueryBuilderTest {
 
         String expectedQuery = "SELECT col1, col2 FROM table1 WHERE a=?";
 
-        assertEquals(expectedQuery, queryBuilder.prepareSelectQuery(columnNames, tableName, keys, valuesTypes, values).toString());
+        assertEquals(expectedQuery, queryBuilder.buildSelectQuery(columnNames, tableName, keys, valuesTypes, values).toString());
     }
 
     @Test
-    public void givenPrepareSelectQueryMethod_whenCalledWithEqualNumberOfKeysAndValuesAndValuesAreStrings_thenSelectWithWhereClauseIsPrepared() {
+    public void givenBuildSelectQueryMethod_whenCalledWithEqualNumberOfKeysAndValuesAndValuesAreStrings_thenSelectWithWhereClauseIsPrepared() {
         QueryBuilder queryBuilder = new QueryBuilder();
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.add("col1");
@@ -142,6 +142,6 @@ public class QueryBuilderTest {
 
         String expectedQuery = "SELECT col1, col2 FROM table1 WHERE a=? AND X=?";
 
-        assertEquals(expectedQuery, queryBuilder.prepareSelectQuery(columnNames, tableName, keys, valuesTypes, values).toString());
+        assertEquals(expectedQuery, queryBuilder.buildSelectQuery(columnNames, tableName, keys, valuesTypes, values).toString());
     }
 }

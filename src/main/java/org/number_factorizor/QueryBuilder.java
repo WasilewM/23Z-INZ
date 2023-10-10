@@ -4,11 +4,11 @@ import org.common.SqlStatementDataTypes;
 import java.util.ArrayList;
 
 public class QueryBuilder {
-    public StringBuilder prepareSelectQuery(ArrayList<String> columnNames, String tableName) {
-        return prepareSelectQuery(columnNames, tableName, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    public StringBuilder buildSelectQuery(ArrayList<String> columnNames, String tableName) {
+        return buildSelectQuery(columnNames, tableName, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
-    public StringBuilder prepareSelectQuery(ArrayList<String> columnNames, String tableName, ArrayList<String> keys, ArrayList<SqlStatementDataTypes> valuesTypes, ArrayList<Object> values) {
+    public StringBuilder buildSelectQuery(ArrayList<String> columnNames, String tableName, ArrayList<String> keys, ArrayList<SqlStatementDataTypes> valuesTypes, ArrayList<Object> values) {
         if (areGivenArrayListsValid(keys, valuesTypes, values)) {
             throw new IllegalArgumentException("ArrayLists keys, valuesTypes and values have to be of equal size");
         }
