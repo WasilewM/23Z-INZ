@@ -1,4 +1,6 @@
-package org.client_requests_simulator;
+package org.client_request_simulator;
+
+import org.number_factorizor.NumberFactorizor;
 
 import static java.lang.System.exit;
 
@@ -12,7 +14,7 @@ public class Main {
         String address = args[0];
         String port = args[1];
 
-        ClientRequestsSimulator crs = new ClientRequestsSimulator(address, port);
+        ClientRequestSimulator crs = new ClientRequestSimulator(address, port, NumberFactorizor.FACTORIZATION_RANGE);
         crs.simulateTraffic();
         crs.closeConnection();
     }
