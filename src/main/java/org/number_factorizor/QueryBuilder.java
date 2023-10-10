@@ -1,37 +1,56 @@
 package org.number_factorizor;
 
+import org.common.SqlStatementDataTypes;
+import java.util.ArrayList;
+
 public class QueryBuilder {
-    StringBuilder query;
-    public StringBuilder buildSelectQuery(int columnsNumber) {
-        return buildSelectQuery(columnsNumber, 0);
+    public StringBuilder buildSelectQuery(ArrayList<String> columnNames, String tableName) {
+        return buildSelectQuery(columnNames, tableName, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
-    public StringBuilder buildSelectQuery(int columnsNumber, int argsNumber) {
-        query = new StringBuilder();
+    public StringBuilder buildSelectQuery(ArrayList<String> columnNames, String tableName, ArrayList<String> keys, ArrayList<SqlStatementDataTypes> valuesTypes, ArrayList<Object> values) {
+        if (areGivenArrayListsValid(keys, valuesTypes, values)) {
+            throw new IllegalArgumentException("ArrayLists keys, valuesTypes and values have to be of equal size");
+        }
+        StringBuilder query = new StringBuilder();
         query.append("SELECT ");
-        addColumnNamesToQuery(columnsNumber);
-        query.append(" FROM ?");
-        addWhereConditionToQuery(argsNumber);
+        addColumnNamesToQuery(columnNames, query);
+        addTableNameToQuery(tableName, query);
+        addWhereConditionToQuery(keys, values, query);
         return query;
     }
 
-    private void addColumnNamesToQuery(int columnsNumbers) {
-        for (int i = 0; i < columnsNumbers; i++) {
-            if (i > 0) {
+    private static boolean areGivenArrayListsValid(ArrayList<String> keys, ArrayList<SqlStatementDataTypes> valuesTypes, ArrayList<Object> values) {
+        return keys.size() != values.size() || keys.size() != valuesTypes.size();
+    }
+
+    private static void addColumnNamesToQuery(ArrayList<String> columnNames, StringBuilder query) {
+        int counter = 1;
+        for (String cn: columnNames) {
+            if (counter > 1) {
                 query.append(", ");
             }
-            query.append("?");
+            query.append(cn);
+            counter += 1;
         }
     }
 
-    private void addWhereConditionToQuery(int argsNumber) {
-        if (argsNumber > 0) {
+    private static void addTableNameToQuery(String tableName, StringBuilder query) {
+        query.append(" FROM ");
+        query.append(tableName);
+    }
+
+    private void addWhereConditionToQuery(ArrayList<String> keys, ArrayList<Object> values, StringBuilder query) {
+        if (values.size() > 0) {
             query.append(" WHERE ");
-            for (int i = 0; i < argsNumber; i++) {
-                if (i > 0) {
+            int counter = 1;
+            for (String k : keys) {
+                if (counter > 1) {
                     query.append(" AND ");
                 }
-                query.append("?=?");
+                query.append(k);
+                query.append("=?");
+                counter += 1;
             }
         }
     }
