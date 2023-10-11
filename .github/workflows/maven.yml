@@ -27,8 +27,9 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
+    - name: Build server app with Maven
       run: mvn -B package --file pom.xml
-    - name: Test with Maven
-      run: mvn test
-
+    - name: Test server app with Maven
+      run: mvn test --file pom.xml
+    - name: Build client app with Maven
+      run: mvn -B package --file client_pom.xml
