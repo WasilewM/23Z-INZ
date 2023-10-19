@@ -28,8 +28,10 @@ public class FactorizationResultController {
         Optional<FactorizationResult> cacheResult = factorizationResultService.getFactorizationResultFor(number);
         if (cacheResult.isEmpty()) {
             NumberFactorizor nr = new NumberFactorizor();
-            ArrayList<Integer> res = nr.factorize(number);
-            return Optional.of(new FactorizationResult(number, res.toString()));
+            ArrayList<Integer> factors = nr.factorize(number);
+            FactorizationResult factorizationResult = new FactorizationResult(number, factors.toString());
+            factorizationResultService.saveFactorizationResult(factorizationResult);
+            return Optional.of(factorizationResult);
         }
         return cacheResult;
     }
