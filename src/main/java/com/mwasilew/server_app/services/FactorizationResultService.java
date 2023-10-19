@@ -5,7 +5,7 @@ import com.mwasilew.server_app.repositories.FactorizationResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FactorizationResultService {
@@ -16,7 +16,7 @@ public class FactorizationResultService {
         this.factorizationResultRepository = factorizationResultRepository;
     }
 
-    public List<FactorizationResult> getFactors() {
-        return factorizationResultRepository.findAll();
+    public Optional<FactorizationResult> getFactorizationResultFor(int number) {
+        return factorizationResultRepository.findById(number);
     }
 }
