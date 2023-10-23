@@ -62,6 +62,17 @@ public class NumberFactorizorTest
     }
 
     @Test
+    public void givenFactorizeMethod_whenCalledWithFirstPrimeNumber_thenListWithOneAndThisPrimeIsReturned() {
+        NumberFactorizor nf = new NumberFactorizor();
+        int inputNumber = 2;
+        ArrayList<Integer> expectedResult = new ArrayList<>();
+        expectedResult.add(1);
+        expectedResult.add(inputNumber);
+
+        assertEquals(expectedResult, nf.factorize(inputNumber));
+    }
+
+    @Test
     public void givenFactorizeMethod_whenCalledWithPrimeNumber_thenListWithOneAndThisPrimeIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
         int inputNumber = 61;

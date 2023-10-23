@@ -70,7 +70,7 @@ public class NumberFactorizor {
     }
 
     private static boolean isPositiveEvenNumber(int inputNumber) {
-        return inputNumber > 2 && inputNumber % 2 == 0;
+        return inputNumber >= 2 && inputNumber % 2 == 0;
     }
 
     private static boolean isCompositeEvenNumber(int inputNumber) {
