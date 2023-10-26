@@ -1,9 +1,9 @@
 package com.mwasilew.server_app.services;
 
 import com.mwasilew.server_app.NumberFactorizor;
-import com.mwasilew.server_app.controllers.FactorizationResultController;
+import com.mwasilew.server_app.controllers.FactorizationController;
 import com.mwasilew.server_app.models.FactorizationResult;
-import com.mwasilew.server_app.repositories.FactorizationResultRepository;
+import com.mwasilew.server_app.repositories.FactorizationRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +15,17 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
-public class FactorizationResultService {
-    private final FactorizationResultRepository factorizationResultRepository;
+public class FactorizationService {
+    private final FactorizationRepository factorizationRepository;
 
     @Autowired
-    public FactorizationResultService(FactorizationResultRepository factorizationResultRepository) {
-        this.factorizationResultRepository = factorizationResultRepository;
+    public FactorizationService(FactorizationRepository factorizationRepository) {
+        this.factorizationRepository = factorizationRepository;
     }
 
     public Optional<FactorizationResult> getFactorizationResultFor(int number) {
         long calcStartTime = System.currentTimeMillis();
-        Optional<FactorizationResult> cacheResult = factorizationResultRepository.findById(number);
+        Optional<FactorizationResult> cacheResult = factorizationRepository.findById(number);
         if (cacheResult.isEmpty()) {
             return handleRequestCalculations(number, calcStartTime);
         }
@@ -33,12 +33,12 @@ public class FactorizationResultService {
     }
 
     public void saveFactorizationResult(FactorizationResult factorizationResult) {
-        factorizationResultRepository.save(factorizationResult);
+        factorizationRepository.save(factorizationResult);
     }
 
     private Optional<FactorizationResult> handleRequestCalculations(int number, long calcStartTime) {
-        synchronized (FactorizationResultController.class) {
-            Optional<FactorizationResult> cacheResult = factorizationResultRepository.findById(number);
+        synchronized (FactorizationController.class) {
+            Optional<FactorizationResult> cacheResult = factorizationRepository.findById(number);
             if (cacheResult.isEmpty()) {
                 FactorizationResult factorizationResult = calculateFactorizationResult(number);
                 this.saveFactorizationResult(factorizationResult);
