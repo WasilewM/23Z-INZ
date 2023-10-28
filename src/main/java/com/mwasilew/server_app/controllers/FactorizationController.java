@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path= "factorize")
+@RequestMapping(path = "factorize")
 public class FactorizationController {
     private final FactorizationLoggerService factorizationService;
 

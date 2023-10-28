@@ -6,12 +6,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-@Getter @Setter
+@Getter
+@Setter
 @ToString
-@AllArgsConstructor @NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 
 @Entity
-@Table(name="factorization_results")
+@Table(name = "factorization_results")
 public class FactorizationResult {
     private Integer number;
     @Column(nullable = false, columnDefinition = "JSON")

@@ -37,5 +37,4 @@ public class FactorizationLoggerService extends FactorizationService {
         return super.calculateFactorizationResult(number);
     }
 
-
 }
