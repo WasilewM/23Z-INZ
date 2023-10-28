@@ -1,30 +1,41 @@
 package com.mwasilew.server_app.services;
 
 import com.mwasilew.server_app.models.FactorizationResult;
+import com.mwasilew.server_app.repositories.FactorizationRepository;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
-public class FactorizationLoggerService {
-    private final FactorizationService factorizationService;
+public class FactorizationLoggerService extends FactorizationService {
     private final Timer factorizationTimer;
 
     @Autowired
-    public FactorizationLoggerService(FactorizationService fs, CompositeMeterRegistry mr) {
-        this.factorizationService = fs;
+    public FactorizationLoggerService(FactorizationRepository factorizationRepository, CompositeMeterRegistry mr) {
+        super(factorizationRepository);
         this.factorizationTimer = Timer.builder("factorization_timer").register(mr);
     }
 
+    @Override
     public Optional<FactorizationResult> getFactorizationResultFor(int number) {
         long calcStartTime = System.currentTimeMillis();
-        Optional<FactorizationResult> result = factorizationService.getFactorizationResultFor(number);
+        Optional<FactorizationResult> result = super.getFactorizationResultFor(number);
         long calcEndTime = System.currentTimeMillis();
         factorizationTimer.record(calcEndTime - calcStartTime, TimeUnit.MILLISECONDS);
         return result;
     }
+
+    @Override
+    protected FactorizationResult calculateFactorizationResult(int number) {
+        log.info("Not found in cache: " + number);
+        return super.calculateFactorizationResult(number);
+    }
+
+
 }

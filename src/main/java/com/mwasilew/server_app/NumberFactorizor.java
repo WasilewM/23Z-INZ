@@ -11,6 +11,7 @@ public class NumberFactorizor {
     }
 
     public ArrayList<Integer> factorize(int inputNumber) throws IllegalArgumentException {
+        clearPreviousSolution();
         if (!isNumberInRange(inputNumber)) {
             String msg = "Expected number in range 0 - " + FACTORIZATION_RANGE;
             msg += ", but received \"" + inputNumber + "\"";
@@ -25,6 +26,10 @@ public class NumberFactorizor {
             }
         }
         return factorizationSolution;
+    }
+
+    private void clearPreviousSolution() {
+        factorizationSolution.clear();
     }
 
     private void addTwoDivisorForPositiveEvenNumber(int inputNumber) {
