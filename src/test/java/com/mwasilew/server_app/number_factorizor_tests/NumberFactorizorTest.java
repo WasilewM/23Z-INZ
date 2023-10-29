@@ -9,8 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.testng.Assert.assertFalse;
 
-public class NumberFactorizorTest
-{
+public class NumberFactorizorTest {
     @Test
     public void givenFactorizeMethod_whenCalledWithZero_thenEmptyListIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
