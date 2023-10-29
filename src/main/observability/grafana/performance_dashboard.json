@@ -207,7 +207,7 @@
             "uid": "f031b544-e026-4421-a1f6-ffa8d2b9243e"
           },
           "editorMode": "code",
-          "expr": "rate(factorization_requests_counter_total[1m])",
+          "expr": "rate(factorization_timer_seconds_count[1m])",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
