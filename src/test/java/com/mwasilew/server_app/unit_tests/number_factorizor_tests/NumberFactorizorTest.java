@@ -1,4 +1,4 @@
-package com.mwasilew.server_app.number_factorizor_tests;
+package com.mwasilew.server_app.unit_tests.number_factorizor_tests;
 
 import com.mwasilew.server_app.NumberFactorizor;
 import org.junit.jupiter.api.Test;

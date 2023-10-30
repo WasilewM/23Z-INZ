@@ -1,4 +1,4 @@
-package com.mwasilew.server_app.services_tests;
+package com.mwasilew.server_app.unit_tests.services_tests;
 
 import com.mwasilew.server_app.models.FactorizationResult;
 import com.mwasilew.server_app.repositories.FactorizationRepository;
