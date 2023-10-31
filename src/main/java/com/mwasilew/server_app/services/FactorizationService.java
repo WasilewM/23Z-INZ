@@ -32,10 +32,6 @@ public class FactorizationService {
         return cacheResult;
     }
 
-    protected void saveFactorizationResult(FactorizationResult factorizationResult) {
-        factorizationRepository.save(factorizationResult);
-    }
-
     protected Optional<FactorizationResult> handleRequestCalculations(int number) {
         synchronized (FactorizationController.class) {
             Optional<FactorizationResult> cacheResult = factorizationRepository.findById(number);
@@ -52,5 +48,9 @@ public class FactorizationService {
     protected FactorizationResult calculateFactorizationResult(int number) {
         ArrayList<Integer> factors = numberFactorizor.factorize(number);
         return new FactorizationResult(number, factors.toString());
+    }
+
+    protected void saveFactorizationResult(FactorizationResult factorizationResult) {
+        factorizationRepository.save(factorizationResult);
     }
 }

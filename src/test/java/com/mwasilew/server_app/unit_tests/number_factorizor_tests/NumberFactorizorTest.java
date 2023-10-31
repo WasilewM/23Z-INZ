@@ -1,4 +1,4 @@
-package com.mwasilew.server_app.number_factorizor_tests;
+package com.mwasilew.server_app.unit_tests.number_factorizor_tests;
 
 import com.mwasilew.server_app.NumberFactorizor;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.testng.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class NumberFactorizorTest {
     @Test
