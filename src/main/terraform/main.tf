@@ -64,8 +64,9 @@ resource "azurerm_subnet_network_security_group_association" "test-01-rule-dev-0
   network_security_group_id = azurerm_network_security_group.test-01-sg-01.id
 }
 
-resource "azurerm_public_ip" "test-01-public-ip-01" {
-  name                = "test-01-public-ip-01"
+# VM for observability
+resource "azurerm_public_ip" "test-01-public-ip-observability" {
+  name                = "test-01-public-ip-observability"
   resource_group_name = azurerm_resource_group.test-01-rg.name
   location            = azurerm_resource_group.test-01-rg.location
   allocation_method   = "Dynamic"
@@ -74,16 +75,16 @@ resource "azurerm_public_ip" "test-01-public-ip-01" {
   }
 }
 
-resource "azurerm_network_interface" "test-01-nic-01" {
-  name                = "test-01-nic-01"
+resource "azurerm_network_interface" "test-01-nic-observability" {
+  name                = "test-01-nic-observability"
   location            = azurerm_resource_group.test-01-rg.location
   resource_group_name = azurerm_resource_group.test-01-rg.name
 
   ip_configuration {
-    name                          = "test-01-internal-01"
+    name                          = "test-01-internal-observability"
     subnet_id                     = azurerm_subnet.test-01-subnet-01.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.test-01-public-ip-01.id
+    public_ip_address_id          = azurerm_public_ip.test-01-public-ip-observability.id
   }
 
   tags = {
@@ -91,13 +92,13 @@ resource "azurerm_network_interface" "test-01-nic-01" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "test-01-vm" {
-  name                  = "test-01-vm"
+resource "azurerm_linux_virtual_machine" "test-01-vm-observability" {
+  name                  = "test-01-vm-observability"
   resource_group_name   = azurerm_resource_group.test-01-rg.name
   location              = azurerm_resource_group.test-01-rg.location
   size                  = "Standard_B1s"
   admin_username        = "adminuser"
-  network_interface_ids = [azurerm_network_interface.test-01-nic-01.id]
+  network_interface_ids = [azurerm_network_interface.test-01-nic-observability.id]
 
   custom_data = filebase64("customdata_observability.tpl")
 
