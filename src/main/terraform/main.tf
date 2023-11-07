@@ -121,16 +121,6 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-observability" {
 }
 
 # VM for MySQL master DB
-resource "azurerm_public_ip" "test-01-public-ip-master-db" {
-  name                = "test-01-public-ip-master-db"
-  resource_group_name = azurerm_resource_group.test-01-rg.name
-  location            = azurerm_resource_group.test-01-rg.location
-  allocation_method   = "Dynamic"
-  tags = {
-    environment = "test"
-  }
-}
-
 resource "azurerm_network_interface" "test-01-nic-master-db" {
   name                = "test-01-nic-master-db"
   location            = azurerm_resource_group.test-01-rg.location
@@ -140,7 +130,6 @@ resource "azurerm_network_interface" "test-01-nic-master-db" {
     name                          = "test-01-internal-master-db"
     subnet_id                     = azurerm_subnet.test-01-subnet-01.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.test-01-public-ip-master-db.id
   }
 
   tags = {
@@ -157,18 +146,6 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-master-db" {
   network_interface_ids = [azurerm_network_interface.test-01-nic-master-db.id]
 
   custom_data = filebase64("customdata_db.tpl")
-
-  connection {
-    type        = "ssh"
-    user        = "adminuser"
-    private_key = file("~/.ssh/azure_test-01-rg_key")
-    host        = self.public_ip_address
-  }
-
-  provisioner "file" {
-    source      = "../db/"
-    destination = "/home/adminuser"
-  }
 
   admin_ssh_key {
     username   = "adminuser"
