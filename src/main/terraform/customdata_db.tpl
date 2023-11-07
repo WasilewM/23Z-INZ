@@ -10,5 +10,5 @@ echo "port=$port" | sudo tee -a /etc/mysql/my.cnf
 echo "bind-address = 0.0.0.0" | sudo tee -a /etc/mysql/my.cnf
 echo "server-id = 1" | sudo tee -a /etc/mysql/my.cnf
 echo "log_bin = /var/log/mysql/mysql-bin.log" | sudo tee -a /etc/mysql/my.cnf
-sudo service mysql restart
-sudo service mysql start
+sudo systemctl mysql restart
+sudo systemctl mysql start

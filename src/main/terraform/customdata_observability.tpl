@@ -10,4 +10,9 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &&
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" &&
 sudo apt-get update -y &&
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y &&
-sudo usermod -aG docker adminuser
+cd /home/adminuser &&
+git clone https://github.com/WasilewM/23Z-INZ/ &&
+cd 23Z-INZ &&
+git checkout dev-observability &&
+cd src/main/observability &&
+sudo docker compose up -d

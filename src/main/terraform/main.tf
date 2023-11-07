@@ -102,18 +102,6 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-observability" {
 
   custom_data = filebase64("customdata_observability.tpl")
 
-  connection {
-    type        = "ssh"
-    user        = "adminuser"
-    private_key = file("~/.ssh/azure_test-01-rg_key")
-    host        = self.public_ip_address
-  }
-
-  provisioner "file" {
-    source      = "../observability/"
-    destination = "/home/adminuser"
-  }
-
   admin_ssh_key {
     username   = "adminuser"
     public_key = file("~/.ssh/azure_test-01-rg_key.pub")
