@@ -102,6 +102,86 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-observability" {
 
   custom_data = filebase64("customdata_observability.tpl")
 
+  connection {
+    type        = "ssh"
+    user        = "adminuser"
+    private_key = file("~/.ssh/azure_test-01-rg_key")
+    host        = self.public_ip_address
+  }
+
+  provisioner "file" {
+    source      = "../observability/"
+    destination = "/home/adminuser"
+  }
+
+  admin_ssh_key {
+    username   = "adminuser"
+    public_key = file("~/.ssh/azure_test-01-rg_key.pub")
+  }
+
+  os_disk {
+    storage_account_type = "Standard_LRS"
+    caching              = "ReadWrite"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
+  }
+}
+
+# VM for MySQL master DB
+resource "azurerm_public_ip" "test-01-public-ip-master-db" {
+  name                = "test-01-public-ip-master-db"
+  resource_group_name = azurerm_resource_group.test-01-rg.name
+  location            = azurerm_resource_group.test-01-rg.location
+  allocation_method   = "Dynamic"
+  tags = {
+    environment = "test"
+  }
+}
+
+resource "azurerm_network_interface" "test-01-nic-master-db" {
+  name                = "test-01-nic-master-db"
+  location            = azurerm_resource_group.test-01-rg.location
+  resource_group_name = azurerm_resource_group.test-01-rg.name
+
+  ip_configuration {
+    name                          = "test-01-internal-master-db"
+    subnet_id                     = azurerm_subnet.test-01-subnet-01.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.test-01-public-ip-master-db.id
+  }
+
+  tags = {
+    environment = "test"
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "test-01-vm-master-db" {
+  name                  = "test-01-vm-master-db"
+  resource_group_name   = azurerm_resource_group.test-01-rg.name
+  location              = azurerm_resource_group.test-01-rg.location
+  size                  = "Standard_B1s"
+  admin_username        = "adminuser"
+  network_interface_ids = [azurerm_network_interface.test-01-nic-master-db.id]
+
+  custom_data = filebase64("customdata_db.tpl")
+
+  connection {
+    type        = "ssh"
+    user        = "adminuser"
+    private_key = file("~/.ssh/azure_test-01-rg_key")
+    host        = self.public_ip_address
+  }
+
+  provisioner "file" {
+    source      = "../db/"
+    destination = "/home/adminuser"
+  }
+
   admin_ssh_key {
     username   = "adminuser"
     public_key = file("~/.ssh/azure_test-01-rg_key.pub")
