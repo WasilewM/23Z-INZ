@@ -4,9 +4,10 @@ services:
     image: prom/prometheus
     ports:
       - "9090:9090"
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
     depends_on:
@@ -15,3 +16,8 @@ services:
     image: grafana/grafana
     ports:
       - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./grafana:/etc/grafana/provisioning
+volumes:
+  prometheus_data:
