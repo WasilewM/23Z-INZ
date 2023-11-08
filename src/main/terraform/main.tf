@@ -97,14 +97,14 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-observability" {
   resource_group_name   = azurerm_resource_group.test-01-rg.name
   location              = azurerm_resource_group.test-01-rg.location
   size                  = "Standard_B1s"
-  admin_username        = "adminuser"
+  admin_username        = var.admin_username
   network_interface_ids = [azurerm_network_interface.test-01-nic-observability.id]
 
   custom_data = filebase64("customdata_observability.tpl")
 
   admin_ssh_key {
-    username   = "adminuser"
-    public_key = file("~/.ssh/azure_test-01-rg_key.pub")
+    username   = var.admin_username
+    public_key = file(var.public_key_path)
   }
 
   os_disk {
@@ -142,14 +142,14 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-master-db" {
   resource_group_name   = azurerm_resource_group.test-01-rg.name
   location              = azurerm_resource_group.test-01-rg.location
   size                  = "Standard_B1s"
-  admin_username        = "adminuser"
+  admin_username        = var.admin_username
   network_interface_ids = [azurerm_network_interface.test-01-nic-master-db.id]
 
   custom_data = filebase64("customdata_db.tpl")
 
   admin_ssh_key {
-    username   = "adminuser"
-    public_key = file("~/.ssh/azure_test-01-rg_key.pub")
+    username   = var.admin_username
+    public_key = file(var.public_key_path)
   }
 
   os_disk {

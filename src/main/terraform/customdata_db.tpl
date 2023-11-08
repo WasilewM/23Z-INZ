@@ -1,5 +1,6 @@
 #!/bin/bash
-cd /home/adminuser &&
+sudo mkdir -p /home/customdata &&
+cd /home/customdata &&
 git clone https://github.com/WasilewM/23Z-INZ/ &&
 cd 23Z-INZ &&
 git checkout dev &&
