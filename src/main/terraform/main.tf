@@ -118,6 +118,8 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-observability" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+
+  depends_on = [azurerm_linux_virtual_machine.test-01-vm-server-app]
 }
 
 # VM for MySQL master DB
@@ -163,4 +165,62 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-master-db" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+}
+
+# VM for server-app
+resource "azurerm_public_ip" "test-01-public-ip-server-app" {
+  name                = "test-01-public-ip-server-app"
+  resource_group_name = azurerm_resource_group.test-01-rg.name
+  location            = azurerm_resource_group.test-01-rg.location
+  allocation_method   = "Dynamic"
+  tags = {
+    environment = "test"
+  }
+}
+
+resource "azurerm_network_interface" "test-01-nic-server-app" {
+  name                = "test-01-nic-server-app"
+  location            = azurerm_resource_group.test-01-rg.location
+  resource_group_name = azurerm_resource_group.test-01-rg.name
+
+  ip_configuration {
+    name                          = "test-01-internal-server-app"
+    subnet_id                     = azurerm_subnet.test-01-subnet-01.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.test-01-public-ip-server-app.id
+  }
+
+  tags = {
+    environment = "test"
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "test-01-vm-server-app" {
+  name                  = "test-01-vm-server-app"
+  resource_group_name   = azurerm_resource_group.test-01-rg.name
+  location              = azurerm_resource_group.test-01-rg.location
+  size                  = "Standard_B1s"
+  admin_username        = var.admin_username
+  network_interface_ids = [azurerm_network_interface.test-01-nic-server-app.id]
+
+  custom_data = filebase64("customdata_server_app.tpl")
+
+  admin_ssh_key {
+    username   = var.admin_username
+    public_key = file(var.public_key_path)
+  }
+
+  os_disk {
+    storage_account_type = "Standard_LRS"
+    caching              = "ReadWrite"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
+  }
+
+  depends_on = [azurerm_linux_virtual_machine.test-01-vm-master-db]
 }
