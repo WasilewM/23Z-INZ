@@ -15,8 +15,6 @@
     <description>inzynierka_spring</description>
     <properties>
         <java.version>19</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
-        <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
@@ -86,15 +84,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>19</source>
-                    <target>19</target>
                 </configuration>
             </plugin>
         </plugins>
