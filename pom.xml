@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.mwasilew</groupId>
@@ -14,7 +14,7 @@
     <name>inzynierka_spring</name>
     <description>inzynierka_spring</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>19</java.version>
     </properties>
     <dependencies>
         <dependency>
