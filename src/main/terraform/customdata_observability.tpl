@@ -14,7 +14,6 @@ sudo mkdir -p /home/customdata &&
 cd /home/customdata &&
 git clone https://github.com/WasilewM/23Z-INZ/ &&
 cd 23Z-INZ &&
-git checkout dev &&
 cd src/main/observability &&
 new_ip=$(ip a | grep 'inet 10\.0\.1\..' | awk '{print $2}' | cut -f1 -d'/')
 sudo sed -i "s|%prometheus_url%|http://$new_ip:9090|g" -i ./grafana/datasources/datasources.yaml
