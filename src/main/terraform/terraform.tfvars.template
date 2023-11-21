@@ -1,5 +1,0 @@
-admin_username           = ""
-public_key_path          = ""
-server_private_ip        = ""
-master_db_private_ip     = ""
-observability_private_ip = ""
