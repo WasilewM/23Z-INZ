@@ -11,42 +11,45 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_resource_group" "test-01-rg" {
-  name     = "test-01-rg"
+resource "azurerm_resource_group" "iaas-rg" {
+  name     = "iaas-rg"
   location = "West Europe"
+  
   tags = {
-    environment = "test"
+    environment = "IaaS"
   }
 }
 
-resource "azurerm_virtual_network" "test-01-vnet" {
-  name                = "test-01-network"
-  resource_group_name = azurerm_resource_group.test-01-rg.name
-  location            = azurerm_resource_group.test-01-rg.location
+resource "azurerm_virtual_network" "iaas-vnet" {
+  name                = "iaas-network"
+  resource_group_name = azurerm_resource_group.iaas-rg.name
+  location            = azurerm_resource_group.iaas-rg.location
   address_space       = ["10.0.1.0/24"]
+  
   tags = {
-    environment = "test"
+    environment = "IaaS"
   }
 }
 
-resource "azurerm_subnet" "test-01-subnet-01" {
-  name                 = "test-01-subnet-01"
-  resource_group_name  = azurerm_resource_group.test-01-rg.name
-  virtual_network_name = azurerm_virtual_network.test-01-vnet.name
+resource "azurerm_subnet" "iaas-subnet-01" {
+  name                 = "iaas-subnet-01"
+  resource_group_name  = azurerm_resource_group.iaas-rg.name
+  virtual_network_name = azurerm_virtual_network.iaas-vnet.name
   address_prefixes     = ["10.0.1.0/26"]
 }
 
-resource "azurerm_network_security_group" "test-01-sg-01" {
-  name                = "test-01-sg-01"
-  location            = azurerm_resource_group.test-01-rg.location
-  resource_group_name = azurerm_resource_group.test-01-rg.name
+resource "azurerm_network_security_group" "iaas-sg-01" {
+  name                = "iaas-sg-01"
+  location            = azurerm_resource_group.iaas-rg.location
+  resource_group_name = azurerm_resource_group.iaas-rg.name
+  
   tags = {
-    environment = "test"
+    environment = "IaaS"
   }
 }
 
-resource "azurerm_network_security_rule" "test-01-rule-dev-01" {
-  name                        = "test-01-rule-dev-01"
+resource "azurerm_network_security_rule" "iaas-rule-dev-01" {
+  name                        = "iaas-rule-dev-01"
   priority                    = 100
   direction                   = "Inbound"
   access                      = "Allow"
@@ -55,51 +58,52 @@ resource "azurerm_network_security_rule" "test-01-rule-dev-01" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = azurerm_resource_group.test-01-rg.name
-  network_security_group_name = azurerm_network_security_group.test-01-sg-01.name
+  resource_group_name         = azurerm_resource_group.iaas-rg.name
+  network_security_group_name = azurerm_network_security_group.iaas-sg-01.name
 }
 
-resource "azurerm_subnet_network_security_group_association" "test-01-rule-dev-01-sga" {
-  subnet_id                 = azurerm_subnet.test-01-subnet-01.id
-  network_security_group_id = azurerm_network_security_group.test-01-sg-01.id
+resource "azurerm_subnet_network_security_group_association" "iaas-rule-dev-01-sga" {
+  subnet_id                 = azurerm_subnet.iaas-subnet-01.id
+  network_security_group_id = azurerm_network_security_group.iaas-sg-01.id
 }
 
 # VM for observability
-resource "azurerm_public_ip" "test-01-public-ip-observability" {
-  name                = "test-01-public-ip-observability"
-  resource_group_name = azurerm_resource_group.test-01-rg.name
-  location            = azurerm_resource_group.test-01-rg.location
+resource "azurerm_public_ip" "iaas-public-ip-observability" {
+  name                = "iaas-public-ip-observability"
+  resource_group_name = azurerm_resource_group.iaas-rg.name
+  location            = azurerm_resource_group.iaas-rg.location
   allocation_method   = "Dynamic"
+
   tags = {
-    environment = "test"
+    environment = "IaaS"
   }
 }
 
-resource "azurerm_network_interface" "test-01-nic-observability" {
-  name                = "test-01-nic-observability"
-  location            = azurerm_resource_group.test-01-rg.location
-  resource_group_name = azurerm_resource_group.test-01-rg.name
+resource "azurerm_network_interface" "iaas-nic-observability" {
+  name                = "iaas-nic-observability"
+  location            = azurerm_resource_group.iaas-rg.location
+  resource_group_name = azurerm_resource_group.iaas-rg.name
 
   ip_configuration {
-    name                          = "test-01-internal-observability"
-    subnet_id                     = azurerm_subnet.test-01-subnet-01.id
+    name                          = "iaas-internal-observability"
+    subnet_id                     = azurerm_subnet.iaas-subnet-01.id
     private_ip_address_allocation = "Static"
     private_ip_address            = var.observability_private_ip
-    public_ip_address_id          = azurerm_public_ip.test-01-public-ip-observability.id
+    public_ip_address_id          = azurerm_public_ip.iaas-public-ip-observability.id
   }
 
   tags = {
-    environment = "test"
+    environment = "IaaS"
   }
 }
 
-resource "azurerm_linux_virtual_machine" "test-01-vm-observability" {
-  name                  = "test-01-vm-observability"
-  resource_group_name   = azurerm_resource_group.test-01-rg.name
-  location              = azurerm_resource_group.test-01-rg.location
+resource "azurerm_linux_virtual_machine" "iaas-vm-observability" {
+  name                  = "iaas-vm-observability"
+  resource_group_name   = azurerm_resource_group.iaas-rg.name
+  location              = azurerm_resource_group.iaas-rg.location
   size                  = "Standard_B1s"
   admin_username        = var.admin_username
-  network_interface_ids = [azurerm_network_interface.test-01-nic-observability.id]
+  network_interface_ids = [azurerm_network_interface.iaas-nic-observability.id]
 
   custom_data = filebase64("customdata_observability.tpl")
 
@@ -120,34 +124,38 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-observability" {
     version   = "latest"
   }
 
-  depends_on = [azurerm_linux_virtual_machine.test-01-vm-server-app]
+  depends_on = [azurerm_linux_virtual_machine.iaas-vm-server-app]
+
+  tags = {
+    environment = "IaaS"
+  }
 }
 
 # VM for MySQL master DB
-resource "azurerm_network_interface" "test-01-nic-master-db" {
-  name                = "test-01-nic-master-db"
-  location            = azurerm_resource_group.test-01-rg.location
-  resource_group_name = azurerm_resource_group.test-01-rg.name
+resource "azurerm_network_interface" "iaas-nic-master-db" {
+  name                = "iaas-nic-master-db"
+  location            = azurerm_resource_group.iaas-rg.location
+  resource_group_name = azurerm_resource_group.iaas-rg.name
 
   ip_configuration {
-    name                          = "test-01-internal-master-db"
-    subnet_id                     = azurerm_subnet.test-01-subnet-01.id
+    name                          = "iaas-internal-master-db"
+    subnet_id                     = azurerm_subnet.iaas-subnet-01.id
     private_ip_address_allocation = "Static"
     private_ip_address            = var.master_db_private_ip
   }
 
   tags = {
-    environment = "test"
+    environment = "IaaS"
   }
 }
 
-resource "azurerm_linux_virtual_machine" "test-01-vm-master-db" {
-  name                  = "test-01-vm-master-db"
-  resource_group_name   = azurerm_resource_group.test-01-rg.name
-  location              = azurerm_resource_group.test-01-rg.location
+resource "azurerm_linux_virtual_machine" "iaas-vm-master-db" {
+  name                  = "iaas-vm-master-db"
+  resource_group_name   = azurerm_resource_group.iaas-rg.name
+  location              = azurerm_resource_group.iaas-rg.location
   size                  = "Standard_B1s"
   admin_username        = var.admin_username
-  network_interface_ids = [azurerm_network_interface.test-01-nic-master-db.id]
+  network_interface_ids = [azurerm_network_interface.iaas-nic-master-db.id]
 
   custom_data = filebase64("customdata_db.tpl")
 
@@ -167,44 +175,49 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-master-db" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+
+  tags = {
+    environment = "IaaS"
+  }
 }
 
 # VM for server-app
-resource "azurerm_public_ip" "test-01-public-ip-server-app" {
-  name                = "test-01-public-ip-server-app"
-  resource_group_name = azurerm_resource_group.test-01-rg.name
-  location            = azurerm_resource_group.test-01-rg.location
+resource "azurerm_public_ip" "iaas-public-ip-server-app" {
+  name                = "iaas-public-ip-server-app"
+  resource_group_name = azurerm_resource_group.iaas-rg.name
+  location            = azurerm_resource_group.iaas-rg.location
   allocation_method   = "Dynamic"
+
   tags = {
-    environment = "test"
+    environment = "IaaS"
   }
 }
 
-resource "azurerm_network_interface" "test-01-nic-server-app" {
-  name                = "test-01-nic-server-app"
-  location            = azurerm_resource_group.test-01-rg.location
-  resource_group_name = azurerm_resource_group.test-01-rg.name
+resource "azurerm_network_interface" "iaas-nic-server-app" {
+  name                = "iaas-nic-server-app"
+  location            = azurerm_resource_group.iaas-rg.location
+  resource_group_name = azurerm_resource_group.iaas-rg.name
 
   ip_configuration {
-    name                          = "test-01-internal-server-app"
-    subnet_id                     = azurerm_subnet.test-01-subnet-01.id
+    name                          = "iaas-internal-server-app"
+    subnet_id                     = azurerm_subnet.iaas-subnet-01.id
     private_ip_address_allocation = "Static"
     private_ip_address            = var.server_private_ip
-    public_ip_address_id          = azurerm_public_ip.test-01-public-ip-server-app.id
+    public_ip_address_id          = azurerm_public_ip.iaas-public-ip-server-app.id
   }
 
   tags = {
-    environment = "test"
+    environment = "IaaS"
   }
 }
 
-resource "azurerm_linux_virtual_machine" "test-01-vm-server-app" {
-  name                  = "test-01-vm-server-app"
-  resource_group_name   = azurerm_resource_group.test-01-rg.name
-  location              = azurerm_resource_group.test-01-rg.location
+resource "azurerm_linux_virtual_machine" "iaas-vm-server-app" {
+  name                  = "iaas-vm-server-app"
+  resource_group_name   = azurerm_resource_group.iaas-rg.name
+  location              = azurerm_resource_group.iaas-rg.location
   size                  = "Standard_B1s"
   admin_username        = var.admin_username
-  network_interface_ids = [azurerm_network_interface.test-01-nic-server-app.id]
+  network_interface_ids = [azurerm_network_interface.iaas-nic-server-app.id]
 
   custom_data = filebase64("customdata_server_app.tpl")
 
@@ -225,5 +238,9 @@ resource "azurerm_linux_virtual_machine" "test-01-vm-server-app" {
     version   = "latest"
   }
 
-  depends_on = [azurerm_linux_virtual_machine.test-01-vm-master-db]
+  depends_on = [azurerm_linux_virtual_machine.iaas-vm-master-db]
+
+  tags = {
+    environment = "IaaS"
+  }
 }
