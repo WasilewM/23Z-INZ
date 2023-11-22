@@ -9,3 +9,11 @@ variable "public_key_path" {
 variable "observability_private_ip" {
   type = string
 }
+
+variable "mysql_administrator_login" {
+  type = string
+}
+
+variable "mysql_administrator_password" {
+  type = string
+}
