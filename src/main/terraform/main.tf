@@ -83,7 +83,8 @@ resource "azurerm_network_interface" "test-01-nic-observability" {
   ip_configuration {
     name                          = "test-01-internal-observability"
     subnet_id                     = azurerm_subnet.test-01-subnet-01.id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = var.observability_private_ip
     public_ip_address_id          = azurerm_public_ip.test-01-public-ip-observability.id
   }
 
@@ -131,7 +132,8 @@ resource "azurerm_network_interface" "test-01-nic-master-db" {
   ip_configuration {
     name                          = "test-01-internal-master-db"
     subnet_id                     = azurerm_subnet.test-01-subnet-01.id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = var.master_db_private_ip
   }
 
   tags = {
@@ -186,7 +188,8 @@ resource "azurerm_network_interface" "test-01-nic-server-app" {
   ip_configuration {
     name                          = "test-01-internal-server-app"
     subnet_id                     = azurerm_subnet.test-01-subnet-01.id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = var.server_private_ip
     public_ip_address_id          = azurerm_public_ip.test-01-public-ip-server-app.id
   }
 
