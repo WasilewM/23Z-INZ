@@ -127,6 +127,11 @@ resource "azurerm_linux_virtual_machine" "paas-vm-observability" {
   tags = {
     environment = "PaaS"
   }
+
+  depends_on = [
+    azurerm_mysql_flexible_server.paas-mysql-flex-serv,
+    azurerm_mysql_flexible_database.paas-mysql-flex-db
+  ]
 }
 
 resource "azurerm_service_plan" "paas-service-plan" {
@@ -230,7 +235,7 @@ resource "azurerm_mysql_flexible_server" "paas-mysql-flex-serv" {
 resource "azurerm_mysql_flexible_database" "paas-mysql-flex-db" {
   charset             = "utf8mb4"
   collation           = "utf8mb4_unicode_ci"
-  name                = "paas-mysql-flex-db"
+  name                = "cache"   # database schema name
   resource_group_name = azurerm_resource_group.paas-rg.name
   server_name         = azurerm_mysql_flexible_server.paas-mysql-flex-serv.name
 }
