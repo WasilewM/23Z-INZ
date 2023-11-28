@@ -12,3 +12,7 @@ cd -
 echo "PWD:$(pwd)"
 . ./variables.sh
 ./deploy_azure_resources.sh
+
+echo "-----------------------------------------------------"
+echo "Deploying observability infrastructure"
+terraform apply -auto-approve

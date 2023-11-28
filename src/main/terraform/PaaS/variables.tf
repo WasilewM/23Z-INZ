@@ -10,10 +10,10 @@ variable "observability_private_ip" {
   type = string
 }
 
-variable "mysql_administrator_login" {
+variable "resource_group_name" {
   type = string
 }
 
-variable "mysql_administrator_password" {
+variable "resource_group_location" {
   type = string
 }
