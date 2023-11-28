@@ -26,6 +26,14 @@ az mysql flexible-server create \
   # Do you want to enable access to client A.B.C.D (y/n):
 
 echo "-----------------------------------------------------"
+echo "Creating DB schema in MySQL DB"
+mysql -h paas-spring-mysql-db.mysql.database.azure.com --user worker --enable-cleartext-plugin --password=wo^Ker_123 < ../../db/mysql/create_table.sql
+
+echo "-----------------------------------------------------"
+echo "Populating DB schema in MySQL DB with data"
+mysql -h paas-spring-mysql-db.mysql.database.azure.com --user worker --enable-cleartext-plugin --password=wo^Ker_123 < ../../db/mysql/populate_db.sql
+
+echo "-----------------------------------------------------"
 echo "Creating Spring App instance"
 az spring app create \
 	--name paas-spring-server-app \
