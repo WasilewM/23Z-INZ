@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export AZ_LOCATION=
+export AZ_MYSQL_ADMIN_USER=
+export AZ_MYSQL_ADMIN_PASSWORD=

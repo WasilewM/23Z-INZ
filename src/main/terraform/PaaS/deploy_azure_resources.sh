@@ -4,7 +4,7 @@ echo "Creating cloud resources..."
 
 echo "-----------------------------------------------------"
 echo "Creating resource group"
-az group create --name paas-spring-rg --location northeurope
+az group create --name paas-spring-rg --location "$AZ_LOCATION"
 
 echo "-----------------------------------------------------"
 echo "Creating Spring Apps Service instance"
@@ -12,13 +12,14 @@ az spring create --name paas-spring-apps-svc --resource-group paas-spring-rg
 
 echo "-----------------------------------------------------"
 echo "Creating MySQL Flexible Server"
+echo "and adding firewall rule to allow current client IP to connect"
 az mysql flexible-server create \
   --resource-group paas-spring-rg \
   --name paas-spring-mysql-db \
   --database-name cache \
-  --admin-user worker \
-  --admin-password wo^Ker_123 \
-	--location northeurope \
+  --admin-user "$AZ_MYSQL_ADMIN_USER" \
+  --admin-password "$AZ_MYSQL_ADMIN_PASSWORD" \
+	--location "$AZ_LOCATION" \
 	--sku-name Standard_B1ms \
 	--version 8.0.21 \
   --yes # Do not prompt for confirmation:
@@ -27,11 +28,11 @@ az mysql flexible-server create \
 
 echo "-----------------------------------------------------"
 echo "Creating DB schema in MySQL DB"
-mysql -h paas-spring-mysql-db.mysql.database.azure.com --user worker --enable-cleartext-plugin --password=wo^Ker_123 < ../../db/mysql/create_table.sql
+mysql -h paas-spring-mysql-db.mysql.database.azure.com --user "$AZ_MYSQL_ADMIN_USER" --enable-cleartext-plugin --password="$AZ_MYSQL_ADMIN_PASSWORD" < ../../db/mysql/create_table.sql
 
 echo "-----------------------------------------------------"
 echo "Populating DB schema in MySQL DB with data"
-mysql -h paas-spring-mysql-db.mysql.database.azure.com --user worker --enable-cleartext-plugin --password=wo^Ker_123 < ../../db/mysql/populate_db.sql
+mysql -h paas-spring-mysql-db.mysql.database.azure.com --user "$AZ_MYSQL_ADMIN_USER" --enable-cleartext-plugin --password="$AZ_MYSQL_ADMIN_PASSWORD" < ../../db/mysql/populate_db.sql
 
 echo "-----------------------------------------------------"
 echo "Creating Spring App instance"
@@ -51,7 +52,7 @@ az spring connection create mysql-flexible \
   --target-resource-group paas-spring-rg \
   --server paas-spring-mysql-db \
   --database cache \
-  --secret name=worker secret=wo^Ker_123 \
+  --secret name="$AZ_MYSQL_ADMIN_USER" secret="$AZ_MYSQL_ADMIN_PASSWORD" \
 	--client-type springBoot
 
 echo "-----------------------------------------------------"
@@ -69,3 +70,5 @@ az spring app list \
   --resource-group paas-spring-rg \
   --service paas-spring-apps-svc \
   --output table
+
+echo "-----------------------------------------------------"
