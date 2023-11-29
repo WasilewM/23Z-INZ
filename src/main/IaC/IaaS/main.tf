@@ -14,7 +14,7 @@ provider "azurerm" {
 resource "azurerm_resource_group" "iaas-rg" {
   name     = "iaas-rg"
   location = "West Europe"
-  
+
   tags = {
     environment = "IaaS"
   }
@@ -25,7 +25,7 @@ resource "azurerm_virtual_network" "iaas-vnet" {
   resource_group_name = azurerm_resource_group.iaas-rg.name
   location            = azurerm_resource_group.iaas-rg.location
   address_space       = ["10.0.1.0/24"]
-  
+
   tags = {
     environment = "IaaS"
   }
@@ -42,7 +42,7 @@ resource "azurerm_network_security_group" "iaas-sg-01" {
   name                = "iaas-sg-01"
   location            = azurerm_resource_group.iaas-rg.location
   resource_group_name = azurerm_resource_group.iaas-rg.name
-  
+
   tags = {
     environment = "IaaS"
   }

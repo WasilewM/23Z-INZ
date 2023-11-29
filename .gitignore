@@ -33,6 +33,6 @@ build/
 .vscode/
 
 ### Terraform ###
-src/main/terraform/IaaS/.terraform
+src/main/IaC/IaaS/.terraform
 *.terraform.*
 *terraform.*
