@@ -1,7 +1,7 @@
 #!/bin/bash
 sudo apt-get update -y &&
 sudo apt install maven \
-openjdk-19-jdk-headless -y &&
+openjdk-17-jdk-headless -y &&
 sudo mkdir -p /home/customdata &&
 cd /home/customdata &&
 git clone https://github.com/WasilewM/23Z-INZ/ &&
