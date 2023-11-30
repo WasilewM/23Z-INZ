@@ -17,11 +17,13 @@ import java.util.Optional;
 public class FactorizationService {
     private final FactorizationRepository factorizationRepository;
     private final NumberFactorizor numberFactorizor;
+    public final String resultForInvalidRequest;
 
     @Autowired
     public FactorizationService(FactorizationRepository factorizationRepository) {
         this.factorizationRepository = factorizationRepository;
         this.numberFactorizor = new NumberFactorizor();
+        this.resultForInvalidRequest = "";
     }
 
     public Optional<FactorizationResult> getFactorizationResultFor(int number) {
@@ -46,11 +48,21 @@ public class FactorizationService {
     }
 
     protected FactorizationResult calculateFactorizationResult(int number) {
-        ArrayList<Integer> factors = numberFactorizor.factorize(number);
-        return new FactorizationResult(number, factors.toString());
+        try {
+            ArrayList<Integer> factors = numberFactorizor.factorize(number);
+            return new FactorizationResult(number, factors.toString());
+        } catch (IllegalArgumentException e) {
+            return getObjectForIllegalArgumentException(number, e);
+        }
+    }
+
+    protected FactorizationResult getObjectForIllegalArgumentException(int number, Exception e) {
+        return new FactorizationResult(number, resultForInvalidRequest);
     }
 
     protected void saveFactorizationResult(FactorizationResult factorizationResult) {
-        factorizationRepository.save(factorizationResult);
+        if (!factorizationResult.getFactors().equals(resultForInvalidRequest)) {
+            factorizationRepository.save(factorizationResult);
+        }
     }
 }
