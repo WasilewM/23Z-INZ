@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -80,7 +79,32 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "sum(rate(factorization_timer_seconds_sum[1m]))/sum(rate(factorization_timer_seconds_count[1m]))"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -94,7 +118,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single",
@@ -119,7 +143,7 @@
           "useBackend": false
         }
       ],
-      "title": "Avg response time",
+      "title": "Average response time [s]",
       "type": "timeseries"
     },
     {
@@ -195,6 +219,9 @@
           "placement": "bottom",
           "showLegend": true
         },
+        "timezone": [
+          "browser"
+        ],
         "tooltip": {
           "mode": "single",
           "sort": "none"
@@ -207,18 +234,35 @@
             "name": "prometheus"
           },
           "editorMode": "code",
+          "exemplar": false,
           "expr": "rate(factorization_timer_seconds_count[1m])",
           "instant": false,
-          "legendFormat": "__auto",
+          "interval": "",
+          "legendFormat": "received requests",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "name": "prometheus"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "rate(calculations_counter_total[1m])",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "performed calculations",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Requests count",
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": false,
   "schemaVersion": 38,
   "tags": [],
   "templating": {
@@ -232,6 +276,6 @@
   "timezone": "",
   "title": "Test app performance dashboard",
   "uid": "c48f8e42-cd8a-475e-a3b8-6bc1e9a9ab17",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
