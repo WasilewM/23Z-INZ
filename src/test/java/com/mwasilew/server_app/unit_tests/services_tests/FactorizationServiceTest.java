@@ -1,7 +1,9 @@
 package com.mwasilew.server_app.unit_tests.services_tests;
 
+import com.mwasilew.server_app.NumberFactorizor;
 import com.mwasilew.server_app.models.FactorizationResult;
 import com.mwasilew.server_app.repositories.FactorizationRepository;
+import org.hibernate.exception.SQLGrammarException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,5 +59,38 @@ public class FactorizationServiceTest {
         assertEquals(1, factorizationService.handleRequestCalculationsMethodCalls);
         assertEquals(1, factorizationService.calculateFactorizationResultMethodCalls);
         assertEquals(1, factorizationService.saveFactorizationResultMethodCalls);
+    }
+
+    @Test
+    public void givenFactorizationService_whenAskedForValueAboveAcceptedRange_thenResultForInvalidRequestIsReturned() {
+        int request = NumberFactorizor.FACTORIZATION_RANGE + 1;
+        Mockito.when(factorizationRepository.findById(request)).thenReturn(Optional.empty());
+        Optional<FactorizationResult> expected = Optional.of(new FactorizationResult(request, ""));
+        Optional<FactorizationResult> actual =  factorizationService.getFactorizationResultFor(request);
+        assert actual.orElse(null) != null;
+        assertEquals(expected.get().getNumber(), actual.orElse(null).getNumber());
+        assertEquals(expected.get().getFactors(), actual.orElse(null).getFactors());
+    }
+
+    @Test
+    public void givenFactorizationService_whenAskedForNegativeNumber_thenResultForInvalidRequestIsReturned() {
+        int request = -1;
+        Mockito.when(factorizationRepository.findById(request)).thenReturn(Optional.empty());
+        Optional<FactorizationResult> expected = Optional.of(new FactorizationResult(request, ""));
+        Optional<FactorizationResult> actual =  factorizationService.getFactorizationResultFor(request);
+        assert actual.orElse(null) != null;
+        assertEquals(expected.get().getNumber(), actual.orElse(null).getNumber());
+        assertEquals(expected.get().getFactors(), actual.orElse(null).getFactors());
+    }
+
+    @Test
+    public void givenFactorizationService_whenErrorOccurredWhileProcessingTheRequest_thenResultForInvalidRequestIsReturned() {
+        int request = 17;
+        Mockito.when(factorizationRepository.findById(request)).thenThrow(SQLGrammarException.class);
+        Optional<FactorizationResult> expected = Optional.of(new FactorizationResult(request, ""));
+        Optional<FactorizationResult> actual =  factorizationService.getFactorizationResultFor(request);
+        assert actual.orElse(null) != null;
+        assertEquals(expected.get().getNumber(), actual.orElse(null).getNumber());
+        assertEquals(expected.get().getFactors(), actual.orElse(null).getFactors());
     }
 }

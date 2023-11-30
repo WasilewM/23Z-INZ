@@ -41,4 +41,9 @@ public class FactorizationLoggerService extends FactorizationService {
         return super.calculateFactorizationResult(number);
     }
 
+    @Override
+    protected FactorizationResult getObjectWhenExceptionOccurred(int number, Exception e) {
+        log.error(e.getMessage());
+        return super.getObjectWhenExceptionOccurred(number, e);
+    }
 }
