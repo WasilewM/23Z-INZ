@@ -182,17 +182,6 @@ resource "azurerm_linux_virtual_machine" "iaas-vm-master-db" {
 }
 
 # VM for server-app
-resource "azurerm_public_ip" "iaas-public-ip-server-app" {
-  name                = "iaas-public-ip-server-app"
-  resource_group_name = azurerm_resource_group.iaas-rg.name
-  location            = azurerm_resource_group.iaas-rg.location
-  allocation_method   = "Dynamic"
-
-  tags = {
-    environment = "IaaS"
-  }
-}
-
 resource "azurerm_network_interface" "iaas-nic-server-app" {
   name                = "iaas-nic-server-app"
   location            = azurerm_resource_group.iaas-rg.location
@@ -203,7 +192,6 @@ resource "azurerm_network_interface" "iaas-nic-server-app" {
     subnet_id                     = azurerm_subnet.iaas-subnet-01.id
     private_ip_address_allocation = "Static"
     private_ip_address            = var.server_private_ip
-    public_ip_address_id          = azurerm_public_ip.iaas-public-ip-server-app.id
   }
 
   tags = {
