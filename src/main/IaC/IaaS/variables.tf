@@ -17,3 +17,7 @@ variable "master_db_private_ip" {
 variable "observability_private_ip" {
   type = string
 }
+
+variable "nginx_private_ip" {
+  type = string
+}
