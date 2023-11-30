@@ -2,6 +2,7 @@ package com.mwasilew.server_app.services;
 
 import com.mwasilew.server_app.models.FactorizationResult;
 import com.mwasilew.server_app.repositories.FactorizationRepository;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +16,13 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class FactorizationLoggerService extends FactorizationService {
     private final Timer factorizationTimer;
+    private final Counter calculationsCounter;
 
     @Autowired
     public FactorizationLoggerService(FactorizationRepository factorizationRepository, CompositeMeterRegistry mr) {
         super(factorizationRepository);
         this.factorizationTimer = Timer.builder("factorization_timer").register(mr);
+        this.calculationsCounter = Counter.builder("calculations_counter").register(mr);
     }
 
     @Override
@@ -34,6 +37,7 @@ public class FactorizationLoggerService extends FactorizationService {
     @Override
     protected FactorizationResult calculateFactorizationResult(int number) {
         log.info("Not found in cache: " + number);
+        calculationsCounter.increment();
         return super.calculateFactorizationResult(number);
     }
 
