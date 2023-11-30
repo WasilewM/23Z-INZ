@@ -42,8 +42,8 @@ public class FactorizationLoggerService extends FactorizationService {
     }
 
     @Override
-    protected FactorizationResult getObjectForIllegalArgumentException(int number, Exception e) {
+    protected FactorizationResult getObjectWhenExceptionOccurred(int number, Exception e) {
         log.error(e.getMessage());
-        return super.getObjectForIllegalArgumentException(number, e);
+        return super.getObjectWhenExceptionOccurred(number, e);
     }
 }

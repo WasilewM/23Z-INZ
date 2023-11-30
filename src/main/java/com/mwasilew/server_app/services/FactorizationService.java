@@ -27,6 +27,14 @@ public class FactorizationService {
     }
 
     public Optional<FactorizationResult> getFactorizationResultFor(int number) {
+        try {
+            return tryToGetFactorizationResultFor(number);
+        } catch (Exception e) {
+            return Optional.of(getObjectWhenExceptionOccurred(number, e));
+        }
+    }
+
+    protected Optional<FactorizationResult> tryToGetFactorizationResultFor(int number) {
         Optional<FactorizationResult> cacheResult = factorizationRepository.findById(number);
         if (cacheResult.isEmpty()) {
             return handleRequestCalculations(number);
@@ -52,11 +60,11 @@ public class FactorizationService {
             ArrayList<Integer> factors = numberFactorizor.factorize(number);
             return new FactorizationResult(number, factors.toString());
         } catch (IllegalArgumentException e) {
-            return getObjectForIllegalArgumentException(number, e);
+            return getObjectWhenExceptionOccurred(number, e);
         }
     }
 
-    protected FactorizationResult getObjectForIllegalArgumentException(int number, Exception e) {
+    protected FactorizationResult getObjectWhenExceptionOccurred(int number, Exception e) {
         return new FactorizationResult(number, resultForInvalidRequest);
     }
 
