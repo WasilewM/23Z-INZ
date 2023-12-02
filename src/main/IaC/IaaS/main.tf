@@ -290,8 +290,6 @@ resource "azurerm_linux_virtual_machine" "iaas-vm-nginx" {
     version   = "latest"
   }
 
-  depends_on = [azurerm_linux_virtual_machine.iaas-vm-master-db]
-
   tags = {
     environment = "IaaS"
   }

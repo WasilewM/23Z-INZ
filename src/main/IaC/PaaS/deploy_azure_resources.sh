@@ -41,7 +41,8 @@ az spring app create \
 	--service paas-spring-apps-svc \
 	--resource-group paas-spring-rg \
 	--assign-endpoint true \
-	--runtime-version Java_17
+	--runtime-version Java_17 \
+  --instance-count "$AZ_SPRING_APP_REPLICAS_COUNT"
 
 echo "-----------------------------------------------------"
 echo "Creating connection between Spring App and MySQL DB"
