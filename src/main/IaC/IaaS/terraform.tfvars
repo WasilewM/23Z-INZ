@@ -1,5 +1,7 @@
 admin_username           = ""
 public_key_path          = ""
+resource_group_name      = ""
+resource_group_location  = ""
 server_private_ip        = ""
 master_db_private_ip     = ""
 observability_private_ip = ""
