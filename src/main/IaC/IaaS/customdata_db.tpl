@@ -16,8 +16,8 @@ echo "bind-address = 0.0.0.0" | sudo tee -a /etc/mysql/my.cnf
 echo "server-id = 1" | sudo tee -a /etc/mysql/my.cnf
 echo "log_bin = /var/log/mysql/mysql-bin.log" | sudo tee -a /etc/mysql/my.cnf
 sudo service mysql restart
-sed -i "s/%db_user%/worker/g" -i ./init_db.sql
-sed -i "s/%db_password%/wo^Ker_123/g" -i ./init_db.sql
+sed -i "s/%db_user%/%mysql_admin_user%/g" -i ./init_db.sql
+sed -i "s/%db_password%/%mysql_admin_password%/g" -i ./init_db.sql
 cat ./init_db.sql | sudo mysql -f
 cat ./create_table.sql | sudo mysql -f
 cat ./populate_db.sql | sudo mysql -f
