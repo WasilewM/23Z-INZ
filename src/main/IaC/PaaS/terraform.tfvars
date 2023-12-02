@@ -1,5 +1,4 @@
 admin_username           = ""
 public_key_path          = ""
-observability_private_ip = ""
 resource_group_name      = ""
 resource_group_location  = ""
