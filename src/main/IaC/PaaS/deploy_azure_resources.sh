@@ -4,17 +4,17 @@ echo "Creating cloud resources..."
 
 echo "-----------------------------------------------------"
 echo "Creating resource group"
-az group create --name paas-spring-rg --location "$AZ_LOCATION"
+az group create --name "$AZ_RESOURCE_GROUP_NAME" --location "$AZ_LOCATION"
 
 echo "-----------------------------------------------------"
 echo "Creating Spring Apps Service instance"
-az spring create --name paas-spring-apps-svc --resource-group paas-spring-rg
+az spring create --name paas-spring-apps-svc --resource-group "$AZ_RESOURCE_GROUP_NAME"
 
 echo "-----------------------------------------------------"
 echo "Creating MySQL Flexible Server"
 echo "and adding firewall rule to allow current client IP to connect"
 az mysql flexible-server create \
-  --resource-group paas-spring-rg \
+  --resource-group "$AZ_RESOURCE_GROUP_NAME" \
   --name paas-spring-mysql-db \
   --database-name cache \
   --admin-user "$AZ_MYSQL_ADMIN_USER" \
@@ -39,17 +39,18 @@ echo "Creating Spring App instance"
 az spring app create \
 	--name paas-spring-server-app \
 	--service paas-spring-apps-svc \
-	--resource-group paas-spring-rg \
+	--resource-group "$AZ_RESOURCE_GROUP_NAME" \
 	--assign-endpoint true \
-	--runtime-version Java_17
+	--runtime-version Java_17 \
+  --instance-count "$AZ_SPRING_APP_REPLICAS_COUNT"
 
 echo "-----------------------------------------------------"
 echo "Creating connection between Spring App and MySQL DB"
 az spring connection create mysql-flexible \
-  --resource-group paas-spring-rg \
+  --resource-group "$AZ_RESOURCE_GROUP_NAME" \
   --service paas-spring-apps-svc \
   --app paas-spring-server-app \
-  --target-resource-group paas-spring-rg \
+  --target-resource-group "$AZ_RESOURCE_GROUP_NAME" \
   --server paas-spring-mysql-db \
   --database cache \
   --secret name="$AZ_MYSQL_ADMIN_USER" secret="$AZ_MYSQL_ADMIN_PASSWORD" \
@@ -60,14 +61,14 @@ echo "Deploying Spring App"
 az spring app deploy \
   --name paas-spring-server-app \
   --service paas-spring-apps-svc \
-  --resource-group paas-spring-rg \
+  --resource-group "$AZ_RESOURCE_GROUP_NAME" \
   --artifact-path ../../../../target/server_app-0.1.0.jar \
 	--runtime-version Java_17
 
 echo "-----------------------------------------------------"
 echo "Cloud resources creations has finished"
 az spring app list \
-  --resource-group paas-spring-rg \
+  --resource-group "$AZ_RESOURCE_GROUP_NAME" \
   --service paas-spring-apps-svc \
   --output table
 

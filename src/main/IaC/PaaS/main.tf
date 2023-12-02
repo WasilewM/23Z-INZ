@@ -78,8 +78,7 @@ resource "azurerm_network_interface" "paas-nic-observability" {
   ip_configuration {
     name                          = "paas-internal-observability"
     subnet_id                     = azurerm_subnet.paas-subnet-01.id
-    private_ip_address_allocation = "Static"
-    private_ip_address            = var.observability_private_ip
+    private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.paas-public-ip-observability.id
   }
 

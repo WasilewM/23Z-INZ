@@ -15,4 +15,8 @@ echo "PWD:$(pwd)"
 
 echo "-----------------------------------------------------"
 echo "Deploying observability infrastructure"
+sed -i "s|%admin_username%|$VM_ADMIN_USERNAME|g" -i ./terraform.tfvars
+sed -i "s|%public_key_path%|$PUBLIC_KEY_PATH|g" -i ./terraform.tfvars
+sed -i "s|%resource_group_name%|$AZ_RESOURCE_GROUP_NAME|g" -i ./terraform.tfvars
+sed -i "s|%resource_group_location%|$AZ_LOCATION|g" -i ./terraform.tfvars
 terraform apply -auto-approve
