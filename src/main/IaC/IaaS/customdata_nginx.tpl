@@ -4,7 +4,7 @@ sudo apt-get install -y nginx
 
 cat << EOF > /etc/nginx/sites-enabled/lb
 upstream backend {
-    server 10.0.1.4:8080;
+    %server_private_ip%
 }
 
 server {

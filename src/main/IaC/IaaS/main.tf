@@ -183,7 +183,8 @@ resource "azurerm_linux_virtual_machine" "iaas-vm-master-db" {
 
 # VM for server-app
 resource "azurerm_network_interface" "iaas-nic-server-app" {
-  name                = "iaas-nic-server-app"
+  for_each            = var.server_app_vms
+  name                = "iaas-nic-server-app-${each.key}"
   location            = azurerm_resource_group.iaas-rg.location
   resource_group_name = azurerm_resource_group.iaas-rg.name
 
@@ -191,7 +192,7 @@ resource "azurerm_network_interface" "iaas-nic-server-app" {
     name                          = "iaas-internal-server-app"
     subnet_id                     = azurerm_subnet.iaas-subnet-01.id
     private_ip_address_allocation = "Static"
-    private_ip_address            = var.server_private_ip
+    private_ip_address            = each.value.private_ip
   }
 
   tags = {
@@ -200,12 +201,13 @@ resource "azurerm_network_interface" "iaas-nic-server-app" {
 }
 
 resource "azurerm_linux_virtual_machine" "iaas-vm-server-app" {
-  name                  = "iaas-vm-server-app"
+  for_each              = var.server_app_vms
+  name                  = "iaas-vm-server-app-${each.key}"
   resource_group_name   = azurerm_resource_group.iaas-rg.name
   location              = azurerm_resource_group.iaas-rg.location
-  size                  = "Standard_B1s"
+  size                  = "Standard_A1_v2"
   admin_username        = var.admin_username
-  network_interface_ids = [azurerm_network_interface.iaas-nic-server-app.id]
+  network_interface_ids = [azurerm_network_interface.iaas-nic-server-app[each.key].id]
 
   custom_data = filebase64("customdata_server_app.tpl")
 
@@ -289,6 +291,8 @@ resource "azurerm_linux_virtual_machine" "iaas-vm-nginx" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+
+  depends_on = [azurerm_linux_virtual_machine.iaas-vm-server-app]
 
   tags = {
     environment = "IaaS"

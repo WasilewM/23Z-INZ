@@ -14,8 +14,10 @@ variable "resource_group_location" {
   type = string
 }
 
-variable "server_private_ip" {
-  type = string
+variable "server_app_vms" {
+  type = map(object({
+    private_ip = string
+  }))
 }
 
 variable "master_db_private_ip" {
