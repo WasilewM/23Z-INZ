@@ -1,17 +1,13 @@
-# Welcome to MkDocs
+# Welcome
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Here you will find some basic information about the docs structure.
 
-## Commands
+## Structure
+Sections [Test service](./server_app/test_service.md), [IaaS](./IaaS/iaas.md), [PaaS](./PaaS/paas.md) and [Requests generator](./requests_generator/requests_generator.md) contain information about separate aspects of the test environment.  
+Additionally, [IaaS](./IaaS/iaas.md) and [PaaS](./PaaS/paas.md) sections have `User guide` sections.  
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Shortcuts
+Following shortcuts can be used everywhere on the documentation website:  
+- `s` - search text  
+- `n` - next page  
+- `p` - previous page  
