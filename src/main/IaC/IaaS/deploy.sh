@@ -4,6 +4,7 @@ echo "-----------------------------------------------------"
 echo "Creating copies of files that need to be changed"
 cp terraform.tfvars terraform.tfvars.backup
 cp customdata_db.tpl customdata_db.tpl.backup
+cp customdata_db_replica.tpl customdata_db_replica.tpl.backup
 cp customdata_nginx.tpl customdata_nginx.tpl.backup
 cp customdata_observability.tpl customdata_observability.tpl.backup
 cp customdata_server_app.tpl customdata_server_app.tpl.backup
@@ -17,6 +18,7 @@ sed -i "s|%public_key_path%|$PUBLIC_KEY_PATH|g" -i ./terraform.tfvars
 sed -i "s|%resource_group_name%|$RESOURCE_GROUP_NAME|g" -i ./terraform.tfvars
 sed -i "s|%resource_group_location%|$RESOURCE_GROUP_LOCATION|g" -i ./terraform.tfvars
 sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./terraform.tfvars
+sed -i "s|%replica_db_private_ip%|$VM_REPLICA_DB_PRIVATE_IP|g" -i ./terraform.tfvars
 sed -i "s|%observability_private_ip%|$VM_OBSERVABILITY_PRIVATE_IP|g" -i ./terraform.tfvars
 sed -i "s|%nginx_private_ip%|$VM_NGINX_PRIVATE_IP|g" -i ./terraform.tfvars
 
@@ -34,6 +36,15 @@ sed -i "s|%server_private_ip%|$block_string|g" -i ./terraform.tfvars
 # customdata_db.tpl
 sed -i "s|%mysql_admin_user%|$MYSQL_ADMIN_USER|g" -i ./customdata_db.tpl
 sed -i "s|%mysql_admin_password%|$MYSQL_ADMIN_PASSWORD|g" -i ./customdata_db.tpl
+sed -i "s|%mysql_replication_user%|$MYSQL_REPLICATION_USER|g" -i ./customdata_db.tpl
+sed -i "s|%mysql_replication_password%|$MYSQL_REPLICATION_PASSWORD|g" -i ./customdata_db.tpl
+
+# customdata_db_replication.tpl
+sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./customdata_db_replica.tpl
+sed -i "s|%mysql_admin_user%|$MYSQL_ADMIN_USER|g" -i ./customdata_db_replica.tpl
+sed -i "s|%mysql_admin_password%|$MYSQL_ADMIN_PASSWORD|g" -i ./customdata_db_replica.tpl
+sed -i "s|%mysql_replication_user%|$MYSQL_REPLICATION_USER|g" -i ./customdata_db_replica.tpl
+sed -i "s|%mysql_replication_password%|$MYSQL_REPLICATION_PASSWORD|g" -i ./customdata_db_replica.tpl
 
 # customdata_nginx.tpl
 servers_string=""

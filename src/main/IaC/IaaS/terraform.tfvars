@@ -3,6 +3,7 @@ public_key_path          = "%public_key_path%"
 resource_group_name      = "%resource_group_name%"
 resource_group_location  = "%resource_group_location%"
 master_db_private_ip     = "%master_db_private_ip%"
+replica_db_private_ip    = "%replica_db_private_ip%"
 observability_private_ip = "%observability_private_ip%"
 nginx_private_ip         = "%nginx_private_ip%"
 

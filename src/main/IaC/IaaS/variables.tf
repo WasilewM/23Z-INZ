@@ -24,6 +24,10 @@ variable "master_db_private_ip" {
   type = string
 }
 
+variable "replica_db_private_ip" {
+  type = string
+}
+
 variable "observability_private_ip" {
   type = string
 }
