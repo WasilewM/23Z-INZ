@@ -17,12 +17,10 @@ sed -i "s|%admin_username%|$VM_ADMIN_USERNAME|g" -i ./terraform.tfvars
 sed -i "s|%public_key_path%|$PUBLIC_KEY_PATH|g" -i ./terraform.tfvars
 sed -i "s|%resource_group_name%|$RESOURCE_GROUP_NAME|g" -i ./terraform.tfvars
 sed -i "s|%resource_group_location%|$RESOURCE_GROUP_LOCATION|g" -i ./terraform.tfvars
-sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./terraform.tfvars
-sed -i "s|%replica_db_private_ip%|$VM_REPLICA_DB_PRIVATE_IP|g" -i ./terraform.tfvars
 sed -i "s|%observability_private_ip%|$VM_OBSERVABILITY_PRIVATE_IP|g" -i ./terraform.tfvars
 sed -i "s|%nginx_private_ip%|$VM_NGINX_PRIVATE_IP|g" -i ./terraform.tfvars
 
-# create a configuration block of all server vms
+# create a configuration block of all server VMs
 block_string=""
 for ((i = 0; i < ${#VM_SERVER_PRIVATE_IP[@]}; i++)); do
     ip="${VM_SERVER_PRIVATE_IP[i]}"
@@ -33,11 +31,38 @@ for ((i = 0; i < ${#VM_SERVER_PRIVATE_IP[@]}; i++)); do
 done
 sed -i "s|%server_private_ip%|$block_string|g" -i ./terraform.tfvars
 
+# create a configuration block of all DB VMs
+db_block_string=""
+## add master DB
+db_block_string="\"master\" = {\n"
+db_block_string+="    private_ip = \"$VM_MASTER_DB_PRIVATE_IP\"\n"
+db_block_string+="    customdata_file = \"customdata_db.tpl\"\n"
+db_block_string+="  }\n"
+## add replica DB
+if [ ! -z "$VM_REPLICA_DB_PRIVATE_IP" ]; then
+    if [ ! -z "$MYSQL_REPLICATION_USER" ]; then
+        if [ ! -z "$MYSQL_REPLICATION_PASSWORD" ]; then
+            db_block_string+="\"replica\" = {\n"
+            db_block_string+="    private_ip = \"$VM_REPLICA_DB_PRIVATE_IP\"\n"
+            db_block_string+="    customdata_file = \"customdata_db_replica.tpl\"\n"
+            db_block_string+="  }\n"
+        else
+            echo "MYSQL_REPLICATION_PASSWORD is empty or not set. Cannot create a user without password"
+        fi
+    else
+        echo "MYSQL_REPLICATION_USER is empty or not set. Replication user will not be created"
+    fi
+else
+    echo "VM_REPLICA_DB_PRIVATE_IP is empty or not set. Replication DB will not be created"
+fi
+## terraform.tfvars
+sed -i "s|%db_ip%|$db_block_string|g" -i ./terraform.tfvars
+
 # customdata_db.tpl
 sed -i "s|%mysql_admin_user%|$MYSQL_ADMIN_USER|g" -i ./customdata_db.tpl
 sed -i "s|%mysql_admin_password%|$MYSQL_ADMIN_PASSWORD|g" -i ./customdata_db.tpl
-sed -i "s|%mysql_replication_user%|$MYSQL_REPLICATION_USER|g" -i ./customdata_db.tpl
-sed -i "s|%mysql_replication_password%|$MYSQL_REPLICATION_PASSWORD|g" -i ./customdata_db.tpl
+sed -i "s|mysql_replication_user=|mysql_replication_user=$MYSQL_REPLICATION_USER|g" -i ./customdata_db.tpl
+sed -i "s|mysql_replication_password=|mysql_replication_password=$MYSQL_REPLICATION_PASSWORD|g" -i ./customdata_db.tpl
 
 # customdata_db_replication.tpl
 sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./customdata_db_replica.tpl

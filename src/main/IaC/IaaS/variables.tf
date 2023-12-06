@@ -20,12 +20,11 @@ variable "server_app_vms" {
   }))
 }
 
-variable "master_db_private_ip" {
-  type = string
-}
-
-variable "replica_db_private_ip" {
-  type = string
+variable "db_vms" {
+  type = map(object({
+    private_ip      = string
+    customdata_file = string
+  }))
 }
 
 variable "observability_private_ip" {
