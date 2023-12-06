@@ -28,11 +28,49 @@ az mysql flexible-server create \
 
 echo "-----------------------------------------------------"
 echo "Creating DB schema in MySQL DB"
-mysql -h paas-spring-mysql-db.mysql.database.azure.com --user "$MYSQL_ADMIN_USER" --enable-cleartext-plugin --password="$MYSQL_ADMIN_PASSWORD" < ../../db/mysql/create_table.sql
+mysql -h paas-spring-mysql-db.mysql.database.azure.com \
+  --user "$MYSQL_ADMIN_USER" \
+  --enable-cleartext-plugin \
+  --password="$MYSQL_ADMIN_PASSWORD" < ../../db/mysql/create_table.sql
 
 echo "-----------------------------------------------------"
-echo "Populating DB schema in MySQL DB with data"
-mysql -h paas-spring-mysql-db.mysql.database.azure.com --user "$MYSQL_ADMIN_USER" --enable-cleartext-plugin --password="$MYSQL_ADMIN_PASSWORD" < ../../db/mysql/populate_db.sql
+echo "Creating MySQL Flexible Server - Replica DB"
+echo "and adding firewall rule to allow current client IP to connect"
+if [ ! -z "$MYSQL_REPLICATION_USER" ]; then
+    if [ ! -z "$MYSQL_REPLICATION_PASSWORD" ]; then
+        sed -i "s/%db_replication_user%/$MYSQL_REPLICATION_USER/g" -i ../../db/mysql/create_replication_user.sql
+        sed -i "s/%db_replication_password%/$MYSQL_REPLICATION_PASSWORD/g" -i ../../db/mysql/create_replication_user.sql
+
+        mysql -h paas-spring-mysql-db.mysql.database.azure.com \
+        --user "$MYSQL_ADMIN_USER" \
+        --enable-cleartext-plugin \
+        --password="$MYSQL_ADMIN_PASSWORD" < ../../db/mysql/create_replication_user.sql
+
+        az mysql flexible-server create \
+          --resource-group "$RESOURCE_GROUP_NAME" \
+          --name paas-spring-mysql-db-replica \
+          --database-name cache \
+          --admin-user "$MYSQL_ADMIN_USER" \
+          --admin-password "$MYSQL_ADMIN_PASSWORD" \
+        	--location "$RESOURCE_GROUP_LOCATION" \
+        	--sku-name Standard_B1ms \
+        	--version 8.0.21 \
+          --yes # Do not prompt for confirmation:
+          # Detected current client IP : A.B.C.D
+          # Do you want to enable access to client A.B.C.D (y/n):
+
+          echo "-----------------------------------------------------"
+          echo "Creating DB schema in MySQL Replica DB"
+          mysql -h paas-spring-mysql-db-replica.mysql.database.azure.com \
+          --user "$MYSQL_ADMIN_USER" \
+          --enable-cleartext-plugin \
+          --password="$MYSQL_ADMIN_PASSWORD" < ../../db/mysql/create_table.sql
+    else
+        echo "MYSQL_REPLICATION_PASSWORD is empty or not set. Cannot create a user without password"
+    fi
+else
+    echo "MYSQL_REPLICATION_USER is empty or not set. Replication user will not be created"
+fi
 
 echo "-----------------------------------------------------"
 echo "Creating Spring App instance"

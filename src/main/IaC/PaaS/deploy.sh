@@ -3,6 +3,7 @@
 echo "-----------------------------------------------------"
 echo "Creating copies of files that need to be changed"
 cp terraform.tfvars terraform.tfvars.backup
+cp ../../db/mysql/create_replication_user.sql ../../db/mysql/create_replication_user.sql.backup
 
 echo "-----------------------------------------------------"
 echo "Packaging maven project"
