@@ -1,6 +1,10 @@
 #!/bin/sh
 
 echo "-----------------------------------------------------"
+echo "Creating copies of files that need to be changed"
+cp terraform.tfvars terraform.tfvars.backup
+
+echo "-----------------------------------------------------"
 echo "Packaging maven project"
 cd ../../../../
 echo "PWD:$(pwd)"
