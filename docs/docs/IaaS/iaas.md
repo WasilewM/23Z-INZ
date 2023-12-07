@@ -95,6 +95,60 @@ Terraform logs have been skipped in the example in order not to reveal any sensi
 When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment)
 
 ### How to create a n-1 model?
+The steps to create a n-1 model are almost the same as the ones executed previously for 1-1 model.  
+The only difference is the number of IP addresses used for `VM_SERVER_PRIVATE_IP` variable. Here we should specify the internal IPs for the VMs we want to create, for example `("10.0.1.4" "10.0.1.8")` or `("10.0.1.4" "10.0.1.8" "10.0.1.9")`.  
+
+!!! Tip
+    Before created numerous VMs we should check our resource quotas to make sure that we are allowed to creat the desired environment. We need to pay attention to the following quotas:  
+    - `Total Regional vCPUs` - represents total number of `vCPUs` that we can request  
+    - `Standard BS Family vCPUs` - represents the number of `vCPUs` from `Standard BS Family` that we can request. VMs for the database and the nginx load balancer use this `vCPUs`  
+    - `Standard Av2 Family vCPUs` - represents the number of `vCPUs` from `Standard Av2 Family` that we can request. VMs for the server application use this `vCPUs`  
+    More on quotas topic can be found [here](https://learn.microsoft.com/en-us/azure/quotas/quotas-overview).  
+    More on VM families can be found [here](https://azure.microsoft.com/en-us/pricing/details/virtual-machines/series/).  
+
+To sum up all the above our `variables.sh` file for 1-n model should look like this:
+```bash
+#!/bin/bash
+
+export RESOURCE_GROUP_NAME=iaas-rg
+export RESOURCE_GROUP_LOCATION=westeurope
+export MYSQL_ADMIN_USER=worker
+export MYSQL_ADMIN_PASSWORD=wo^Ker_123
+export MYSQL_REPLICATION_USER=
+export MYSQL_REPLICATION_PASSWORD=
+export VM_ADMIN_USERNAME=adminuser
+export PUBLIC_KEY_PATH=~/.ssh/azure_test-01-rg_key.pub
+export VM_SERVER_PRIVATE_IP=("10.0.1.4" "10.0.1.8")
+export VM_MASTER_DB_PRIVATE_IP=10.0.1.5
+export VM_REPLICA_DB_PRIVATE_IP=
+export VM_OBSERVABILITY_PRIVATE_IP=10.0.1.6
+export VM_NGINX_PRIVATE_IP=10.0.1.7
+```
+Now we can run `deploy.sh` script to create the test environment:
+```shell
+./deploy.sh
+```
+And we expect the output similar to this one:
+```shell
+-----------------------------------------------------
+Creating copies of files that need to be changed     
+-----------------------------------------------------
+Reading variables.sh
+VM_REPLICA_DB_PRIVATE_IP is empty or not set. Replication DB will not be created
+-----------------------------------------------------
+Deploying infrastructure
+terraform.tfvars
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+...
+
+Apply complete! Resources: 18 added, 0 changed, 0 destroyed.
+```
+
+!!! Warning  
+    We may need to wait a bit for the VMs to be ready due to the fact that they are being configured in the background.
+
+When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment)
 
 ### How to create a master-slave database configuration?
 
