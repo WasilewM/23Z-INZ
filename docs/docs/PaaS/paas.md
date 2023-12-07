@@ -305,7 +305,7 @@ mysql> SELECT * FROM factorization_results;
 
 mysql>
 ```
-If the tables content match, then everything has been configured correctly.  
+If the content of the tables matches, then everything has been configured correctly.  
 If you need more information about connecting the slave database to master database, please refer to these 2 articles:  
 - [How to configure Azure Database for MySQL - Flexible Server data-in replication](https://learn.microsoft.com/en-us/azure/mysql/flexible-server/how-to-data-in-replication?tabs=bash%2Ccommand-line#configure-the-source-mysql-server)  
 - [MySQL Configuring Replication](https://dev.mysql.com/doc/refman/5.7/en/replication-configuration.html)
