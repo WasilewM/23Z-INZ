@@ -76,11 +76,13 @@ Terraform used the selected providers to generate the following execution plan. 
   + create
 
 Terraform will perform the following actions:
-# terraform logs containing you sensitive information, like ssh-rsa key, Azure subscription ID
+...
+
 Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
 ```
+Terraform logs have been skipped in the example in order not to reveal any sensitive data, like Azure subscription ID, email address, etc.
 
-When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment)
+When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to create a n-1 model?
 The steps to create a n-1 model are almost the same as the ones executed previously for 1-1 model.  
@@ -107,11 +109,32 @@ The command used to create the test environment is the same as previously:
 ```shell
 ./deploy.sh
 ```
+When the script finishes its execution we should see confirmation that our resources have been created successfully:
+```shell
+-----------------------------------------------------
+Cloud resources creations has finished
+Name                    Location     ResourceGroup    Public Url                                                                 Production Deployment    Provisioning State    CPU    Memory    Running Instance    Registered Instance
+    Persistent Storage    Bind Service Registry    Bind Application Configuration Service
+----------------------  -----------  ---------------  -------------------------------------------------------------------------  -----------------------  --------------------  -----  --------  ------------------  -------------------
+--  --------------------  -----------------------  ----------------------------------------
+paas-spring-server-app  northeurope  paas-spring-rg   https://paas-spring-apps-svc-paas-spring-server-app.azuremicroservices.io  default                  Succeeded             1      1Gi       3/3                 0/3
+    -                     -                        -
+-----------------------------------------------------
+-----------------------------------------------------
+Deploying observability infrastructure
+...
+
+Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
+```
+
+Terraform logs have been skipped in the example in order not to reveal any sensitive data, like Azure subscription ID, email address, etc.
+
+When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to create a master-slave database configuration?
 As mentioned in the variables description earlier, we will need to specify values for 2 variables that we've left empty until now:  
-- `MYSQL_REPLICATION_USER` - username for the replication user
-- `MYSQL_REPLICATION_PASSWORD` - password for the `MYSQL_REPLICATION_USER`
+- `MYSQL_REPLICATION_USER` - username for the replication user  
+- `MYSQL_REPLICATION_PASSWORD` - password for the `MYSQL_REPLICATION_USER`  
 So our `variables.sh` file should look like this:  
 ```bash
 #!/bin/sh
@@ -130,6 +153,26 @@ And now we cen deploy the resources:
 ```shell
 ./deploy.sh
 ```
+When the script finishes its execution we should see confirmation that our resources have been created successfully:
+```shell
+-----------------------------------------------------
+Cloud resources creations has finished
+Name                    Location     ResourceGroup    Public Url                                                                 Production Deployment    Provisioning State    CPU    Memory    Running Instance    Registered Instance
+    Persistent Storage    Bind Service Registry    Bind Application Configuration Service
+----------------------  -----------  ---------------  -------------------------------------------------------------------------  -----------------------  --------------------  -----  --------  ------------------  -------------------
+--  --------------------  -----------------------  ----------------------------------------
+paas-spring-server-app  northeurope  paas-spring-rg   https://paas-spring-apps-svc-paas-spring-server-app.azuremicroservices.io  default                  Succeeded             1      1Gi       3/3                 0/3
+    -                     -                        -
+-----------------------------------------------------
+-----------------------------------------------------
+Deploying observability infrastructure
+...
+
+Apply complete! Resources: 8 added, 0 changed, 0 destroyed.
+```
+
+Terraform logs have been skipped in the example in order not to reveal any sensitive data, like Azure subscription ID, email address, etc.
+
 Unlike previous configuration options, after creating resource we need to do a few things manually.  
 Firstly, we need to go to [Azure portal website](https://portal.azure.com/#home). Then we need to select `Resource groups`:  
 ![replica_db_configuration-01](./replica_db_configuration/replica_db_configuration-01.png)  
@@ -207,12 +250,12 @@ In order to connect current database to the first one we need to use the command
 CALL mysql.az_replication_change_master('<master_host>', '<master_user>', '<master_password>', <master_port>, '<master_log_file>', <master_log_pos>, '<master_ssl_ca>');
 ```
 Here is an explanation for the values placeholders:  
-- `<master_host>` - represents the name of the first database. In our case this name is `paas-spring-mysql-db.mysql.database.azure.com`
-- `<master_user>` - user which will be used to replicate the data from the first database (called master) to the current database (called slave). We have specified the name of this user in the `varaibles.sh` file in the `MYSQL_REPLICATION_USER` variable
-- `<master_password>` - password that will be used by the replication user. We have specified this value in the `varaibles.sh` file in the `MYSQL_REPLICATION_PASSWORD` variable
-- `<master_port>` - MySQL Database default connection port is `3306` and because we haven't changed it, we can use it here
-- `<master_log_file>` - name of the file use for logging that we have checked earlier. This is the value present in the `File` column we have received when we have checked the master status on the first database.
-- `<master_log_pos>` - position in binary log that we have checked earlier. This is the value present in the `Position` column we have received when we have checked the master status on the first database.
+- `<master_host>` - represents the name of the first database. In our case this name is `paas-spring-mysql-db.mysql.database.azure.com`  
+- `<master_user>` - user which will be used to replicate the data from the first database (called master) to the current database (called slave). We have specified the name of this user in the `varaibles.sh` file in the `MYSQL_REPLICATION_USER` variable  
+- `<master_password>` - password that will be used by the replication user. We have specified this value in the `varaibles.sh` file in the `MYSQL_REPLICATION_PASSWORD` variable  
+- `<master_port>` - MySQL Database default connection port is `3306` and because we haven't changed it, we can use it here  
+- `<master_log_file>` - name of the file use for logging that we have checked earlier. This is the value present in the `File` column we have received when we have checked the master status on the first database  
+- `<master_log_pos>` - position in binary log that we have checked earlier. This is the value present in the `Position` column we have received when we have checked the master status on the first database  
 To sum up all the above our query looks like this:  
 ```mysql
 CALL mysql.az_replication_change_master('paas-spring-mysql-db.mysql.database.azure.com', 'repl', 'repl#789', 3306, 'mysql-bin.000001', 1855, @cert);
@@ -288,7 +331,8 @@ And the result is:
 +--------+---------+
 1 row in set (0.07 sec)
 ```
-We can move on to the slave database to check the data stored there. Again, we need to select the database and query the table:  
+We can move on to the slave database to check the data stored there.  
+Again, we need to select the database and query the table:  
 ```mysql
 mysql> USE CACHE;
 Reading table information for completion of table and column names
@@ -306,9 +350,13 @@ mysql> SELECT * FROM factorization_results;
 mysql>
 ```
 If the content of the tables matches, then everything has been configured correctly.  
-If you need more information about connecting the slave database to master database, please refer to these 2 articles:  
-- [How to configure Azure Database for MySQL - Flexible Server data-in replication](https://learn.microsoft.com/en-us/azure/mysql/flexible-server/how-to-data-in-replication?tabs=bash%2Ccommand-line#configure-the-source-mysql-server)  
-- [MySQL Configuring Replication](https://dev.mysql.com/doc/refman/5.7/en/replication-configuration.html)
+
+!!! Note
+    If you need more information about connecting the slave database to master database, please refer to these 2 articles:  
+    - [How to configure Azure Database for MySQL - Flexible Server data-in replication](https://learn.microsoft.com/en-us/azure/mysql/flexible-server/how-to-data-in-replication?tabs=bash%2Ccommand-line#configure-the-source-mysql-server)  
+    - [MySQL Configuring Replication](https://dev.mysql.com/doc/refman/5.7/en/replication-configuration.html)
+
+When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to clean up the environment?
 When the test environment is no longer needed we can run `destroy.sh` script to clean up the environment:
