@@ -92,7 +92,7 @@ Terraform logs have been skipped in the example in order not to reveal any sensi
 !!! Warning  
     We may need to wait a bit for the VMs to be ready due to the fact that they are being configured in the background.  
 
-When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment)
+When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to create a n-1 model?
 The steps to create a n-1 model are almost the same as the ones executed previously for 1-1 model.  
@@ -144,13 +144,64 @@ Terraform used the selected providers to generate the following execution plan. 
 
 Apply complete! Resources: 18 added, 0 changed, 0 destroyed.
 ```
+Terraform logs have been skipped in the example in order not to reveal any sensitive data, like Azure subscription ID, email address, etc.
 
 !!! Warning  
     We may need to wait a bit for the VMs to be ready due to the fact that they are being configured in the background.
 
-When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment)
+When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to create a master-slave database configuration?
+As mentioned in the variables description earlier, we will need to specify values for 3 variables that we've left empty until now:  
+- `MYSQL_REPLICATION_USER` - username for the replication user  
+- `MYSQL_REPLICATION_PASSWORD` - password for the `MYSQL_REPLICATION_USER`  
+- `VM_REPLICA_DB_PRIVATE_IP` - a private IP for the virtual machine for the MySQL replica database (slave). The IP has to belong to the IP range of the `"10.0.1.0/26"` subnet  
+So our `variables.sh` file should look like this:
+```bash
+#!/bin/bash
+
+export RESOURCE_GROUP_NAME=iaas-rg
+export RESOURCE_GROUP_LOCATION=westeurope
+export MYSQL_ADMIN_USER=worker
+export MYSQL_ADMIN_PASSWORD=wo^Ker_123
+export MYSQL_REPLICATION_USER=repl
+export MYSQL_REPLICATION_PASSWORD=repl#789
+export VM_ADMIN_USERNAME=adminuser
+export PUBLIC_KEY_PATH=~/.ssh/azure_test-01-rg_key.pub
+export VM_SERVER_PRIVATE_IP=("10.0.1.4" "10.0.1.8")
+export VM_MASTER_DB_PRIVATE_IP=10.0.1.5
+export VM_REPLICA_DB_PRIVATE_IP=10.0.1.9
+export VM_OBSERVABILITY_PRIVATE_IP=10.0.1.6
+export VM_NGINX_PRIVATE_IP=10.0.1.7
+```
+And now we cen deploy the resources:
+```shell
+./deploy.sh
+```
+And we expect the output similar to this one:
+```shell
+-----------------------------------------------------
+Creating copies of files that need to be changed     
+-----------------------------------------------------
+Reading variables.sh
+-----------------------------------------------------
+Deploying infrastructure
+terraform.tfvars
+
+Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+...
+
+Apply complete! Resources: 20 added, 0 changed, 0 destroyed.
+```
+Terraform logs have been skipped in the example in order not to reveal any sensitive data, like Azure subscription ID, email address, etc.
+
+!!! Warning  
+    We may need to wait a bit for the VMs to be ready due to the fact that they are being configured in the background.
+
+When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to clean up the environment?
 When the test environment is no longer needed we can run `destroy.sh` script to clean up the environment:
