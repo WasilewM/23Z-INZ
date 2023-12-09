@@ -348,6 +348,105 @@ terraform.tfvars
 ...
 ```
 
+#### How to change the strategy on a deployed VM?
+Once we are logged in to the nginx virtual machine we can check the content of the `/etc/nginx/sites-enabled/lb` file.  
+For the `Round Robin` strategy the file should look like this:  
+```bash
+upstream backend {
+    server 10.0.1.4:8080;
+server 10.0.1.8:8080;
+
+}
+
+server {
+    listen 8080;
+
+    location / {
+        proxy_pass http://backend;
+        include proxy_params;
+    }
+}
+```
+For the `Least Connections` strategy the file should look like this:  
+```bash
+upstream backend {
+    least_conn;
+server 10.0.1.4:8080;
+server 10.0.1.8:8080;
+
+}
+
+server {
+    listen 8080;
+
+    location / {
+        proxy_pass http://backend;
+        include proxy_params;
+    }
+}
+```
+For the `IP Hash` strategy the file should look like this:
+```bash
+upstream backend {
+    ip_hash;
+server 10.0.1.4:8080;
+server 10.0.1.8:8080;
+
+}
+
+server {
+    listen 8080;
+
+    location / {
+        proxy_pass http://backend;
+        include proxy_params;
+    }
+}
+```
+In order to change the strategy we can simply edit this file and then run the following command to reload the nginx configuration:  
+```shell
+sudo nginx -s reload
+```
+
+??? example
+    The entire strategy change process is presented below:
+    ```
+    adminuser@iaas-vm-nginx:~$ cat /etc/nginx/sites-enabled/lb
+    upstream backend {
+    server 10.0.1.4:8080;
+    server 10.0.1.8:8080;
+    
+    }
+    
+    server {
+    listen 8080;
+    
+        location / {
+            proxy_pass http://backend;
+            include proxy_params;
+        }
+    }
+    adminuser@iaas-vm-nginx:~$ sudo vi  /etc/nginx/sites-enabled/lb
+    adminuser@iaas-vm-nginx:~$ sudo nginx -s reload
+    adminuser@iaas-vm-nginx:~$ cat /etc/nginx/sites-enabled/lb
+    upstream backend {
+    least_conn;
+    server 10.0.1.4:8080;
+    server 10.0.1.8:8080;
+    
+    }
+    
+    server {
+    listen 8080;
+    
+        location / {
+            proxy_pass http://backend;
+            include proxy_params;
+        }
+    }
+    adminuser@iaas-vm-nginx:~$
+    ```
+
 ### How to clean up the environment?
 When the test environment is no longer needed we can run `destroy.sh` script to clean up the environment:
 ```shell
