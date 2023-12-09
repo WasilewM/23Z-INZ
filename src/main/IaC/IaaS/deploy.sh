@@ -73,6 +73,21 @@ sed -i "s|%mysql_replication_password%|$MYSQL_REPLICATION_PASSWORD|g" -i ./custo
 
 # customdata_nginx.tpl
 servers_string=""
+
+if [ ! -z "$NGINX_LOAD_BALANCING_STRATEGY" ]; then
+    if [ "$NGINX_LOAD_BALANCING_STRATEGY" == "least_conn" ]; then
+        servers_string="least_conn;\n"
+        echo "Strategy \"$NGINX_LOAD_BALANCING_STRATEGY\" selected for nginx load balancer"
+    elif [ "$NGINX_LOAD_BALANCING_STRATEGY" == "ip_hash" ]; then
+        servers_string="ip_hash;\n"
+        echo "Strategy \"$NGINX_LOAD_BALANCING_STRATEGY\" selected for nginx load balancer"
+    else
+        echo "Value \"$NGINX_LOAD_BALANCING_STRATEGY\" is undetermined for NGINX_LOAD_BALANCING_STRATEGY. Proceeding with default strategy \"round robin\""
+    fi
+else
+    echo "NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strategy \"round robin\""
+fi
+
 for ip in "${VM_SERVER_PRIVATE_IP[@]}"; do
     servers_string+="server $ip:8080;\n"
 done
