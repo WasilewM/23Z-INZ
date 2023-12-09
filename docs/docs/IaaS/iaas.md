@@ -33,6 +33,7 @@ export VM_MASTER_DB_PRIVATE_IP=
 export VM_REPLICA_DB_PRIVATE_IP=
 export VM_OBSERVABILITY_PRIVATE_IP=
 export VM_NGINX_PRIVATE_IP=
+export NGINX_LOAD_BALANCING_STRATEGY=
 ```
 Below is an explanation of each variable:  
 - `RESOURCE_GROUP_NAME` - resource group name which will be created and in which all other resources will be created  
@@ -47,7 +48,8 @@ Below is an explanation of each variable:
 - `VM_MASTER_DB_PRIVATE_IP` - a private IP for the virtual machine for the MySQL database. The IP has to belong to the IP range of the `"10.0.1.0/26"` subnet
 - `VM_REPLICA_DB_PRIVATE_IP` - a private IP for the virtual machine for the MySQL replica database (slave). In 1-1 model this variable should remain empty
 - `VM_OBSERVABILITY_PRIVATE_IP` - a private IP for the virtual machine for the observability. The IP has to belong to the IP range of the `"10.0.1.0/26"` subnet
-- `VM_NGINX_PRIVATE_IP` - a private IP for the virtual machine for load balancer. The IP has to belong to the IP range of the `"10.0.1.0/26"` subnet
+- `VM_NGINX_PRIVATE_IP` - a private IP for the virtual machine for load balancer. The IP has to belong to the IP range of the `"10.0.1.0/26"` subnet  
+- `NGINX_LOAD_BALANCING_STRATEGY` - a strategy for load balancing. In 1-1 model it is can be left empty. More on the load balancing strategies can be found [here](#how-to-choose-load-balancing-strategy)  
 
 To sum up all the above our `variables.sh` file for 1-1 model should look like this:
 ```bash
@@ -66,6 +68,7 @@ export VM_MASTER_DB_PRIVATE_IP=10.0.1.5
 export VM_REPLICA_DB_PRIVATE_IP=
 export VM_OBSERVABILITY_PRIVATE_IP=10.0.1.6
 export VM_NGINX_PRIVATE_IP=10.0.1.7
+export NGINX_LOAD_BALANCING_STRATEGY=
 ```
 Now we can run `deploy.sh` script to create the test environment:
 ```shell
@@ -78,6 +81,7 @@ Creating copies of files that need to be changed
 -----------------------------------------------------
 Reading variables.sh
 VM_REPLICA_DB_PRIVATE_IP is empty or not set. Replication DB will not be created
+NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strategy "round robin"
 -----------------------------------------------------
 Deploying infrastructure
 terraform.tfvars
@@ -123,6 +127,7 @@ export VM_MASTER_DB_PRIVATE_IP=10.0.1.5
 export VM_REPLICA_DB_PRIVATE_IP=
 export VM_OBSERVABILITY_PRIVATE_IP=10.0.1.6
 export VM_NGINX_PRIVATE_IP=10.0.1.7
+export NGINX_LOAD_BALANCING_STRATEGY=
 ```
 Now we can run `deploy.sh` script to create the test environment:
 ```shell
@@ -135,6 +140,7 @@ Creating copies of files that need to be changed
 -----------------------------------------------------
 Reading variables.sh
 VM_REPLICA_DB_PRIVATE_IP is empty or not set. Replication DB will not be created
+NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strategy "round robin"
 -----------------------------------------------------
 Deploying infrastructure
 terraform.tfvars
@@ -173,6 +179,7 @@ export VM_MASTER_DB_PRIVATE_IP=10.0.1.5
 export VM_REPLICA_DB_PRIVATE_IP=10.0.1.9
 export VM_OBSERVABILITY_PRIVATE_IP=10.0.1.6
 export VM_NGINX_PRIVATE_IP=10.0.1.7
+export NGINX_LOAD_BALANCING_STRATEGY=
 ```
 And now we cen deploy the resources:
 ```shell
@@ -184,6 +191,7 @@ And we expect the output similar to this one:
 Creating copies of files that need to be changed     
 -----------------------------------------------------
 Reading variables.sh
+NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strategy "round robin"
 -----------------------------------------------------
 Deploying infrastructure
 terraform.tfvars
@@ -202,6 +210,143 @@ Terraform logs have been skipped in the example in order not to reveal any sensi
     We may need to wait a bit for the VMs to be ready due to the fact that they are being configured in the background.
 
 When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
+
+### How to choose load balancing strategy?
+#### What load balancing strategies are available?
+In nginx there are several options regarding load balancing which are describe [here](https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/).  
+In this environment we can specify which load balancing strategy do we want to use. Below are quotes describing available strategies:  
+
+!!! quote
+    `Round Robin` – Requests are distributed evenly across the servers (...). This method is used by default (there is no directive for enabling it).
+
+!!! quote
+    `Least Connections` – A request is sent to the server with the least number of active connections (...).
+
+!!! quote
+    `IP Hash` – The server to which a request is sent is determined from the client IP address. In this case, either the first three octets of the IPv4 address or the whole IPv6 address are used to calculate the hash value. The method guarantees that requests from the same address get to the same server unless it is not available.  
+
+#### How to set up the `Round Robin` strategy?
+In order to choose the strategy type, we need to specify a `NGINX_LOAD_BALANCING_STRATEGY` variable value in `variables.sh`:  
+- when left empty, then `Round Robin` strategy is used  
+- `least_conn` should be used to enable `Least Connections` strategy (more on this strategy can be found [here](#how-to-set-up-the-least-connections-strategy))  
+- `ip_hash` should be used to enable `IP Hash` strategy (more on this strategy can be found [here](#how-to-set-up-the-ip-hash-strategy))  
+
+Other variables in `variables.sh` file can be set up the same as in the [1-n model paragraph](#how-to-create-a-n-1-model). We can also change the strategy type for the 1-1 model, but testing different load balancing strategies for only a single target is probably not worth the time.  
+So our `variables.sh` file should look like this:
+```shell
+#!/bin/bash
+
+export RESOURCE_GROUP_NAME=iaas-rg
+export RESOURCE_GROUP_LOCATION=westeurope
+export MYSQL_ADMIN_USER=worker
+export MYSQL_ADMIN_PASSWORD=wo^Ker_123
+export MYSQL_REPLICATION_USER=
+export MYSQL_REPLICATION_PASSWORD=
+export VM_ADMIN_USERNAME=adminuser
+export PUBLIC_KEY_PATH=~/.ssh/azure_test-01-rg_key.pub
+export VM_SERVER_PRIVATE_IP=("10.0.1.4" "10.0.1.8")
+export VM_MASTER_DB_PRIVATE_IP=10.0.1.5
+export VM_REPLICA_DB_PRIVATE_IP=
+export VM_OBSERVABILITY_PRIVATE_IP=10.0.1.6
+export VM_NGINX_PRIVATE_IP=10.0.1.7
+export NGINX_LOAD_BALANCING_STRATEGY=
+```
+
+When the deployment script is already in progress, we can check whether our desired strategy has been selected. The default strategy (`Round Robin`) will have the following message at the beginning of the logs:  
+```shell
+NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strategy "round robin"
+```
+And it can be found here:  
+```shell
+-----------------------------------------------------
+Creating copies of files that need to be changed     
+-----------------------------------------------------
+Reading variables.sh
+VM_REPLICA_DB_PRIVATE_IP is empty or not set. Replication DB will not be created
+NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strategy "round robin"
+-----------------------------------------------------
+Deploying infrastructure
+terraform.tfvars
+...
+```
+
+#### How to set up the `Least Connections` strategy?
+In order to choose the `Least Connections` strategy type, we need to specify the `least_conn` value for the variable `NGINX_LOAD_BALANCING_STRATEGY` in `variables.sh`:
+```shell
+#!/bin/bash
+
+export RESOURCE_GROUP_NAME=iaas-rg
+export RESOURCE_GROUP_LOCATION=westeurope
+export MYSQL_ADMIN_USER=worker
+export MYSQL_ADMIN_PASSWORD=wo^Ker_123
+export MYSQL_REPLICATION_USER=
+export MYSQL_REPLICATION_PASSWORD=
+export VM_ADMIN_USERNAME=adminuser
+export PUBLIC_KEY_PATH=~/.ssh/azure_test-01-rg_key.pub
+export VM_SERVER_PRIVATE_IP=("10.0.1.4" "10.0.1.8")
+export VM_MASTER_DB_PRIVATE_IP=10.0.1.5
+export VM_REPLICA_DB_PRIVATE_IP=
+export VM_OBSERVABILITY_PRIVATE_IP=10.0.1.6
+export VM_NGINX_PRIVATE_IP=10.0.1.7
+export NGINX_LOAD_BALANCING_STRATEGY=least_conn
+```
+
+When the deployment script is already in progress, we can check whether our desired strategy has been selected. The `Least Connections` strategy will have the following message:  
+```shell
+VM_REPLICA_DB_PRIVATE_IP is empty or not set. Replication DB will not be created
+```
+And it can be found here:
+```shell
+-----------------------------------------------------
+Creating copies of files that need to be changed     
+-----------------------------------------------------
+Reading variables.sh
+VM_REPLICA_DB_PRIVATE_IP is empty or not set. Replication DB will not be created
+Strategy "least_conn" selected for nginx load balancer
+-----------------------------------------------------
+Deploying infrastructure
+terraform.tfvars
+...
+```
+
+#### How to set up the `IP Hash` strategy?
+In order to choose the `IP Hash` strategy type, we need to specify the `ip_hash` value for the variable `NGINX_LOAD_BALANCING_STRATEGY` in `variables.sh`:
+```shell
+#!/bin/bash
+
+export RESOURCE_GROUP_NAME=iaas-rg
+export RESOURCE_GROUP_LOCATION=westeurope
+export MYSQL_ADMIN_USER=worker
+export MYSQL_ADMIN_PASSWORD=wo^Ker_123
+export MYSQL_REPLICATION_USER=
+export MYSQL_REPLICATION_PASSWORD=
+export VM_ADMIN_USERNAME=adminuser
+export PUBLIC_KEY_PATH=~/.ssh/azure_test-01-rg_key.pub
+export VM_SERVER_PRIVATE_IP=("10.0.1.4" "10.0.1.8")
+export VM_MASTER_DB_PRIVATE_IP=10.0.1.5
+export VM_REPLICA_DB_PRIVATE_IP=
+export VM_OBSERVABILITY_PRIVATE_IP=10.0.1.6
+export VM_NGINX_PRIVATE_IP=10.0.1.7
+export NGINX_LOAD_BALANCING_STRATEGY=ip_hash
+```
+
+When the deployment script is already in progress, we can check whether our desired strategy has been selected. The `IP Hash` strategy will have the following message:  
+```shell
+Strategy "ip_hash" selected for nginx load balancer
+```
+And it can be found here:
+```shell
+-----------------------------------------------------
+Creating copies of files that need to be changed     
+-----------------------------------------------------
+Reading variables.sh
+VM_REPLICA_DB_PRIVATE_IP is empty or not set. Replication DB will not be created
+Strategy "ip_hash" selected for nginx load balancer
+-----------------------------------------------------
+Deploying infrastructure
+terraform.tfvars
+...
+```
 
 ### How to clean up the environment?
 When the test environment is no longer needed we can run `destroy.sh` script to clean up the environment:
