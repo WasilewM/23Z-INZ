@@ -9,3 +9,8 @@ nav:
   - IaaS: ./IaaS/iaas.md
   - PaaS: ./PaaS/paas.md
   - Requests generator: ./requests_generator/requests_generator.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
