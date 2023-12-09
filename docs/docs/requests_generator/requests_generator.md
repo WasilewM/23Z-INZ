@@ -1,5 +1,6 @@
 # Requests generator
 
+## About
 HTTP requests generator can be downloaded from [this repository](https://github.com/WasilewM/http-requests-generator.git).  
 
 !!! Note
@@ -37,3 +38,10 @@ options:
   -i INPUT, --input INPUT
                         Path to file where requests are stored
 ```
+
+### Available modes
+There are 3 modes implemented:  
+- `g` or `generate` flags should be used if we only want to generate a sample of requests and receive them printed in our CLI  
+- `gs` or `generate-and-save` flags should be used if we want to generate a sample of requests and save it into a file without actually running those requests  
+- `gr` or `generaate-and-run` flags should be used if we want to generate a sample of requests and immediately run them. This is the default behaviour  
+- `lr` or `load-and-run` flags should be used if we want to load a previously generated sample of requests and run them
