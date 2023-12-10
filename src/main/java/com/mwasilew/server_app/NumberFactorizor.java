@@ -48,7 +48,6 @@ public class NumberFactorizor {
             throw new IllegalArgumentException(msg);
         }
 
-        addOneDivisorForPositiveNumber(inputNumber);
         addTwoDivisorForPositiveEvenNumber(inputNumber);
         for (int i = 3; i <= inputNumber; i += 2) {
             if (isPrime(i)) {
@@ -65,12 +64,6 @@ public class NumberFactorizor {
     private void addTwoDivisorForPositiveEvenNumber(int inputNumber) {
         if (isPositiveEvenNumber(inputNumber)) {
             addAllDivisorsOf(inputNumber, 2);
-        }
-    }
-
-    private void addOneDivisorForPositiveNumber(int inputNumber) {
-        if (inputNumber >= 1) {
-            factorizationSolution.add(1);
         }
     }
 
