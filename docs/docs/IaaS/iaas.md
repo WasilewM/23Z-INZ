@@ -472,3 +472,156 @@ Destroy complete! Resources: 16 destroyed.
 -----------------------------------------------------
 Restoring original files
 ```
+
+## Troubleshooting
+### Server app not responding
+Sometimes we may encounter a scenario in which, despite the message of a successful deployment, the server app is not responding.  
+The first thing that we should do is to log into one of the server VMs and check with `htop` that the configuration has already been finished. Due to the fact that server VMs do not have their own public IP we need to SSH to the nginx VM or the observability VM and then SSH over the private IP to the desired server VM to inspect it.  
+
+??? example
+    Below is an example of checking the server VM status:
+    ```shell
+    user@laptop:~$ ssh -i .ssh/azure_test-01-rg_key adminuser@51.136.19.24
+    The authenticity of host '51.136.19.24 (51.136.19.24)' can't be established.
+    ED25519 key fingerprint is SHA256:b9ygkcB5YPMaiDjklwIIM+fCTIp1BOfAnt/pwPMgVK8.
+    This key is not known by any other names
+    Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+    Warning: Permanently added '51.136.19.24' (ED25519) to the list of known hosts.
+    Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.2.0-1018-azure x86_64)
+    
+    * Documentation:  https://help.ubuntu.com
+    * Management:     https://landscape.canonical.com
+    * Support:        https://ubuntu.com/advantage
+    
+    System information disabled due to load higher than 1.0
+    
+    Expanded Security Maintenance for Applications is not enabled.
+    
+    10 updates can be applied immediately.
+    7 of these updates are standard security updates.
+    To see these additional updates run: apt list --upgradable
+    
+    Enable ESM Apps to receive additional future security updates.
+    See https://ubuntu.com/esm or run: sudo pro status
+    
+    
+    
+    The programs included with the Ubuntu system are free software;
+    the exact distribution terms for each program are described in the
+    individual files in /usr/share/doc/*/copyright.
+    
+    Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+    applicable law.
+    
+    To run a command as administrator (user "root"), use "sudo <command>".
+    See "man sudo_root" for details.
+    
+    adminuser@iaas-vm-nginx:~$ vi .ssh/id_rsa
+    adminuser@iaas-vm-nginx:~$ echo ".ssh/id_rsa is my private key which is complementary to the PUBLIC_KEY_PATH I've specified during environment setup"
+    .ssh/id_rsa is my private key which is complementary to the PUBLIC_KEY_PATH I've specified during environment setup
+    adminuser@iaas-vm-nginx:~$ chmod 600 .ssh/id_rsa
+    adminuser@iaas-vm-nginx:~$ ssh -i .ssh/id_rsa adminuser@10.0.1.4
+    The authenticity of host '10.0.1.4 (10.0.1.4)' can't be established.
+    ED25519 key fingerprint is SHA256:ZNNrM/K4jeoQR1FTJyXtveYJ7j3m5XyCxtnseuZmJwo.
+    This key is not known by any other names
+    Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+    Warning: Permanently added '10.0.1.4' (ED25519) to the list of known hosts.
+    Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.2.0-1018-azure x86_64)
+    
+    * Documentation:  https://help.ubuntu.com
+    * Management:     https://landscape.canonical.com
+    * Support:        https://ubuntu.com/advantage
+    
+    System information disabled due to load higher than 1.0
+    
+    Expanded Security Maintenance for Applications is not enabled.
+    
+    10 updates can be applied immediately.
+    7 of these updates are standard security updates.
+    To see these additional updates run: apt list --upgradable
+    
+    2 additional security updates can be applied with ESM Apps.
+    Learn more about enabling ESM Apps service at https://ubuntu.com/esm
+    
+    
+    
+    The programs included with the Ubuntu system are free software;
+    the exact distribution terms for each program are described in the
+    individual files in /usr/share/doc/*/copyright.
+    
+    Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+    applicable law.
+    
+    To run a command as administrator (user "root"), use "sudo <command>".
+    See "man sudo_root" for details.
+    
+    adminuser@iaas-vm-server-app-0:~$ htop
+    ```
+
+If it turns out that there is now more configuration activity on the VM and the server up is still not responding, then we can check whether the properties in `application.properties` file have been configured properly.  
+Before any configuration the `application.properties` file look like this:  
+```
+spring.datasource.url=%datasource_url%
+spring.datasource.username=%datasource_username%
+spring.datasource.password=%datasource_password%
+management.endpoints.web.exposure.include=health,metrics,prometheus,loggers
+management.endpoint.metrics.enabled=true
+management.endpoint.info.enabled=true
+management.endpoint.prometheus.enabled=true
+management.prometheus.metrics.export.enabled=true
+```
+The following placeholders are replaced during configuration process:  
+- `%datasource_url%` - is replaced with the correct database URL  
+- `%datasource_username%` - is replaced with the value we have specified for the `MYSQL_ADMIN_USER` variable in the `variables.sh` file  
+- `%datasource_password%` - is replaced with the value we have specified for the `MYSQL_ADMIN_PASSWORD` variable in the `variables.sh` file  
+
+The `application.properties` file can be found under following filepath: `/home/adminuser/customdata/23Z-INZ/src/main/resources/application.properties`.  
+
+??? example
+    ```
+    adminuser@iaas-vm-nginx:~$ ssh -i .ssh/id_rsa adminuser@10.0.1.4
+    Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.2.0-1018-azure x86_64)
+    
+    * Documentation:  https://help.ubuntu.com
+    * Management:     https://landscape.canonical.com
+    * Support:        https://ubuntu.com/advantage
+    
+    System information as of Sat Dec  9 13:26:10 UTC 2023
+    
+    System load:  0.0               Processes:             115
+    Usage of /:   7.6% of 28.89GB   Users logged in:       0
+    Memory usage: 41%               IPv4 address for eth0: 10.0.1.4
+    Swap usage:   0%
+    
+    
+    Expanded Security Maintenance for Applications is not enabled.
+    
+    10 updates can be applied immediately.
+    7 of these updates are standard security updates.
+    To see these additional updates run: apt list --upgradable
+    
+    2 additional security updates can be applied with ESM Apps.
+    Learn more about enabling ESM Apps service at https://ubuntu.com/esm
+    
+    
+    Last login: Sat Dec  9 13:18:56 2023 from 10.0.1.7
+    To run a command as administrator (user "root"), use "sudo <command>".
+    See "man sudo_root" for details.
+    
+    adminuser@iaas-vm-server-app-0:~$ cat ../customdata/23Z-INZ/src/main/resources/application.properties
+    spring.datasource.url=jdbc:mysql://10.0.1.5:3306/cache
+    spring.datasource.username=worker
+    spring.datasource.password=wo^Ker_123
+    management.endpoints.web.exposure.include=health,metrics,prometheus,loggers
+    management.endpoint.metrics.enabled=true
+    management.endpoint.info.enabled=true
+    management.endpoint.prometheus.enabled=true
+    management.prometheus.metrics.export.enabled=trueadminuser@iaas-vm-server-app-0:~$
+    ```
+
+If anything differs from what we expect, then we can edit this file and try to run the application. To do this we need to be in the `/home/customdata/23Z-INZ` directory and execute here following command:  
+```shell
+sudo mvn spring-boot:run
+```
+
+If it does not work, then the best and the quickest option is to destroy the environment and create it once again.
