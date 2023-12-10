@@ -18,6 +18,15 @@ public class NumberFactorizorTest {
         assertEquals(expectedResult, nf.factorize(inputNumber));
     }
 
+
+    @Test
+    public void givenFactorizeMethod_whenCalledWithOne_thenListWithOneIsReturned() {
+        NumberFactorizor nf = new NumberFactorizor();
+        int inputNumber = 1;
+        ArrayList<Integer> expectedResult = new ArrayList<>();
+        assertEquals(expectedResult, nf.factorize(inputNumber));
+    }
+
     @Test
     public void givenFactorizeMethod_whenCalledWithNegativeNumber_thenIllegalArgumentExceptionIsThrown() {
         NumberFactorizor nf = new NumberFactorizor();
@@ -51,21 +60,10 @@ public class NumberFactorizorTest {
     }
 
     @Test
-    public void givenFactorizeMethod_whenCalledWithOne_thenListWithOneIsReturned() {
-        NumberFactorizor nf = new NumberFactorizor();
-        int inputNumber = 1;
-        ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(inputNumber);
-
-        assertEquals(expectedResult, nf.factorize(inputNumber));
-    }
-
-    @Test
     public void givenFactorizeMethod_whenCalledWithFirstPrimeNumber_thenListWithOneAndThisPrimeIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
         int inputNumber = 2;
         ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
         expectedResult.add(inputNumber);
 
         assertEquals(expectedResult, nf.factorize(inputNumber));
@@ -76,7 +74,6 @@ public class NumberFactorizorTest {
         NumberFactorizor nf = new NumberFactorizor();
         int inputNumber = 61;
         ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
         expectedResult.add(inputNumber);
 
         assertEquals(expectedResult, nf.factorize(inputNumber));
@@ -87,7 +84,6 @@ public class NumberFactorizorTest {
         NumberFactorizor nf = new NumberFactorizor();
         int inputNumber = 6;
         ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
         expectedResult.add(2);
         expectedResult.add(3);
 
@@ -99,7 +95,6 @@ public class NumberFactorizorTest {
         NumberFactorizor nf = new NumberFactorizor();
         int inputNumber = 16;
         ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
         expectedResult.add(2);
         expectedResult.add(2);
         expectedResult.add(2);
@@ -113,7 +108,6 @@ public class NumberFactorizorTest {
         NumberFactorizor nf = new NumberFactorizor();
         int inputNumber = 2147483;
         ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
         expectedResult.add(13);
         expectedResult.add(13);
         expectedResult.add(97);
@@ -128,7 +122,6 @@ public class NumberFactorizorTest {
         NumberFactorizor nf = new NumberFactorizor();
         int inputNumber = NumberFactorizor.FACTORIZATION_RANGE;
         ArrayList<Integer> expectedResult = new ArrayList<>();
-        expectedResult.add(1);
         expectedResult.add(2);
         expectedResult.add(173);
         expectedResult.add(31033);
