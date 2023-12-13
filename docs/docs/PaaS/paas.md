@@ -180,20 +180,18 @@ When the test environment is no longer needed we can run `destroy.sh` script to 
 ```shell
 ./destroy.sh
 ```
-Here we will be asked twice whether we want to destroy the resources. In order to fully clean the environment (and stop paying for the resources wwe no longer need), we need to accept both messages:  
+Here we will be asked whether we want to destroy the test environment (and stop paying for the resources wwe no longer need):  
 ```shell
 ...
-Plan: 0 to add, 0 to change, 8 to destroy.
+Are you sure that you want to destroy the test environment? (y/n)
+```
 
-Do you really want to destroy all resources?
-  Terraform will destroy all your managed infrastructure, as shown above.
-  There is no undo. Only 'yes' will be accepted to confirm.
-
-  Enter a value:
-
+When the script finishes its work we should see a message similar to this one:  
+```shell
 ...
-
 Destroy complete! Resources: 8 destroyed.
-Are you sure you want to perform this operation? (y/n): 
-...
+-----------------------------------------------------
+Restoring original files
+-----------------------------------------------------
+The test environment has been cleaned
 ```
