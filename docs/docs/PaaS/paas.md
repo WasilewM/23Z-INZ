@@ -24,17 +24,17 @@ export RESOURCE_GROUP_NAME=
 export RESOURCE_GROUP_LOCATION=
 export MYSQL_ADMIN_USER=
 export MYSQL_ADMIN_PASSWORD=
-export CREATE_REPLICA_DB=
+export READ_REPLICA_DB_COUNT=
 export SPRING_APP_REPLICAS_COUNT=
 export VM_ADMIN_USERNAME=
 export PUBLIC_KEY_PATH=
 ```
 Below is an explanation of each variable:  
 - `RESOURCE_GROUP_NAME` - resource group name which will be created and in which all other resources will be created  
-- `RESOURCE_GROUP_LOCATION` - Azure region (location) in which resource group should be located. Region names can be checked [here](https://azure.microsoft.com/en-us/explore/global-infrastructure/geographies/#geographies). It is important to choose a region which supports [Azure Spring Apps](https://azure.microsoft.com/en-us/products/spring-apps) because not all of them do. For example `northeurope` or `westeurope` can be chosen, but `polandcentral` is not suitable in this case.  
+- `RESOURCE_GROUP_LOCATION` - Azure region (location) in which resource group should be located. Available names can be checked [here](https://azure.microsoft.com/en-us/explore/global-infrastructure/geographies/#geographies). It is important to choose a region which supports [Azure Spring Apps](https://azure.microsoft.com/en-us/products/spring-apps) because not all of them do. For example `northeurope` or `westeurope` can be chosen, but `polandcentral` is not suitable in this case  
 - `MYSQL_ADMIN_USER` - admin username that will be used to access the database  
-- `MYSQL_REPLICATION_PASSWORD` - password for the `MYSQL_ADMIN_USER`  
-- `CREATE_REPLICA_DB` - boolean switch whether to create a read replica database or not. If value set to `true`, then the replica DB will be created. Otherwise or when left empty, the replica DB will not be created  
+- `MYSQL_ADMIN_PASSWORD` - password for the `MYSQL_ADMIN_USER`  
+- `READ_REPLICA_DB_COUNT` - number of read replica databases that we want to create. In 1-1 model this variable should be set to `0`  
 - `SPRING_APP_REPLICAS_COUNT` - number of the server app replicas that should be created. In 1-1 model this variable should be set to `1`  
 - `VM_ADMIN_USERNAME` - admin username that will be used to access the observability VM  
 - `PUBLIC_KEY_PATH` - path to the public key created for the `VM_ADMIN_USERNAME` to access the observability VM. It is suggested to use following command to generate the ssh key pair: `ssh-keygen -t rsa`. For more information about the ssh keys you can read [this article](https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-creating-ssh-key).  
@@ -47,7 +47,7 @@ export RESOURCE_GROUP_NAME=paas-spring-rg
 export RESOURCE_GROUP_LOCATION=northeurope
 export MYSQL_ADMIN_USER=worker
 export MYSQL_ADMIN_PASSWORD=wo^Ker_123
-export CREATE_REPLICA_DB=
+export READ_REPLICA_DB_COUNT=0
 export SPRING_APP_REPLICAS_COUNT=1
 export VM_ADMIN_USERNAME=adminuser
 export PUBLIC_KEY_PATH=~/.ssh/azure_test-01-rg_key.pub
@@ -96,7 +96,7 @@ export RESOURCE_GROUP_NAME=paas-spring-rg
 export RESOURCE_GROUP_LOCATION=northeurope
 export MYSQL_ADMIN_USER=worker
 export MYSQL_ADMIN_PASSWORD=wo^Ker_123
-export CREATE_REPLICA_DB=
+export READ_REPLICA_DB_COUNT=0
 export SPRING_APP_REPLICAS_COUNT=3
 export VM_ADMIN_USERNAME=adminuser
 export PUBLIC_KEY_PATH=~/.ssh/azure_test-01-rg_key.pub
@@ -128,8 +128,8 @@ Terraform logs have been skipped in the example in order not to reveal any sensi
 When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to create a master-slave database configuration?
-As mentioned in the variables description earlier, we will need to specify value for 1 variable that we've left empty until now:  
-- `CREATE_REPLICA_DB` - needs to be set to `true` in order to create a read replica database  
+As mentioned in the variables description earlier, we will need to modify value for 1 variable (in comparison to previous scenarios):  
+- `READ_REPLICA_DB_COUNT` - needs to be set to the number of read replica databases we want to create  
 So our `variables.sh` file should look like this:  
 ```bash
 #!/bin/sh
@@ -138,7 +138,7 @@ export RESOURCE_GROUP_NAME=paas-spring-rg
 export RESOURCE_GROUP_LOCATION=northeurope
 export MYSQL_ADMIN_USER=worker
 export MYSQL_ADMIN_PASSWORD=wo^Ker_123
-export CREATE_REPLICA_DB=true
+export READ_REPLICA_DB_COUNT=2
 export SPRING_APP_REPLICAS_COUNT=3
 export VM_ADMIN_USERNAME=adminuser
 export PUBLIC_KEY_PATH=~/.ssh/azure_test-01-rg_key.pub
@@ -180,20 +180,18 @@ When the test environment is no longer needed we can run `destroy.sh` script to 
 ```shell
 ./destroy.sh
 ```
-Here we will be asked twice whether we want to destroy the resources. In order to fully clean the environment (and stop paying for the resources wwe no longer need), we need to accept both messages:  
+Here we will be asked whether we want to destroy the test environment (and stop paying for the resources that we no longer need):  
 ```shell
 ...
-Plan: 0 to add, 0 to change, 8 to destroy.
+Are you sure that you want to destroy the test environment? (y/n)
+```
 
-Do you really want to destroy all resources?
-  Terraform will destroy all your managed infrastructure, as shown above.
-  There is no undo. Only 'yes' will be accepted to confirm.
-
-  Enter a value:
-
+When the script finishes its work we should see a message similar to this one:  
+```shell
 ...
-
 Destroy complete! Resources: 8 destroyed.
-Are you sure you want to perform this operation? (y/n): 
-...
+-----------------------------------------------------
+Restoring original files
+-----------------------------------------------------
+The test environment has been cleaned
 ```
