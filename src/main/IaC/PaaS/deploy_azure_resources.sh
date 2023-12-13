@@ -56,12 +56,13 @@ az spring connection create mysql-flexible \
   --secret name="$MYSQL_ADMIN_USER" secret="$MYSQL_ADMIN_PASSWORD" \
 	--client-type springBoot
 
-echo "-----------------------------------------------------"
-echo "Creating MySQL Flexible Server - Replica DB"
-echo "and adding firewall rule to allow current client IP to connect"
-if [ "$CREATE_REPLICA_DB" == "true" ]; then
+for i in $(seq 1 "$READ_REPLICA_DB_COUNT"); do
+      echo "-----------------------------------------------------"
+      echo "Creating MySQL Flexible Server - Replica DB"
+      echo "and adding firewall rule to allow current client IP to connect"
+
       az mysql flexible-server replica create \
-        --replica-name paas-spring-mysql-db-replica \
+        --replica-name paas-spring-mysql-db-replica-"$i" \
         --source-server paas-spring-mysql-db \
         --resource-group "$RESOURCE_GROUP_NAME"
 
@@ -72,13 +73,11 @@ if [ "$CREATE_REPLICA_DB" == "true" ]; then
         --service paas-spring-apps-svc \
         --app paas-spring-server-app \
         --target-resource-group "$RESOURCE_GROUP_NAME" \
-        --server paas-spring-mysql-db-replica \
+        --server paas-spring-mysql-db-replica-"$i" \
         --database cache \
         --secret name="$MYSQL_ADMIN_USER" secret="$MYSQL_ADMIN_PASSWORD" \
       	--client-type springBoot
-else
-    echo "CREATE_REPLICA_DB is empty or not set. Replication DB will not be created"
-fi
+done
 
 echo "-----------------------------------------------------"
 echo "Deploying Spring App"
