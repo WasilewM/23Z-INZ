@@ -21,6 +21,7 @@ if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
     mv customdata_db_replica.tpl.backup customdata_db_replica.tpl
     mv customdata_nginx.tpl.backup customdata_nginx.tpl
     mv customdata_observability.tpl.backup customdata_observability.tpl
+    mv customdata_proxysql.tpl.backup customdata_proxysql.tpl
     mv customdata_server_app.tpl.backup customdata_server_app.tpl
 
     echo "-----------------------------------------------------"

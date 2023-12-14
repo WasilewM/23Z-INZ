@@ -34,3 +34,13 @@ if [ ! -z "$mysql_replication_user" ]; then
 else
     echo "mysql_replication_user is empty or not set. Replication user will not be created"
 fi
+
+sudo mysql <<EOF
+CREATE USER 'monitor'@'%' IDENTIFIED WITH mysql_native_password BY 'monitorpassword';
+GRANT SELECT on *.* to 'monitor'@'%';
+FLUSH PRIVILEGES;
+CREATE USER 'cacheuser'@'%' IDENTIFIED WITH mysql_native_password BY 'cachepassword123';
+GRANT ALL PRIVILEGES on cache.* to 'cacheuser'@'%';
+GRANT ALL PRIVILEGES on cache.* to 'cacheuser'@'iaas-vm-proxysql.internal.cloudapp.net';
+FLUSH PRIVILEGES;
+EOF

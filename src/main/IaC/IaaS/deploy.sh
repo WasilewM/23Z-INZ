@@ -7,6 +7,7 @@ cp customdata_db.tpl customdata_db.tpl.backup
 cp customdata_db_replica.tpl customdata_db_replica.tpl.backup
 cp customdata_nginx.tpl customdata_nginx.tpl.backup
 cp customdata_observability.tpl customdata_observability.tpl.backup
+cp customdata_proxysql.tpl customdata_proxysql.tpl.backup
 cp customdata_server_app.tpl customdata_server_app.tpl.backup
 
 echo "-----------------------------------------------------"
