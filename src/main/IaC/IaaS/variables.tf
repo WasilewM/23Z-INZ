@@ -34,3 +34,7 @@ variable "observability_private_ip" {
 variable "nginx_private_ip" {
   type = string
 }
+
+variable "proxysql_private_ip" {
+  type = string
+}

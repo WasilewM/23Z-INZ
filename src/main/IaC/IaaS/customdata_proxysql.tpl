@@ -10,8 +10,8 @@ echo "UPDATE global_variables SET variable_value='monitor' WHERE variable_name='
 LOAD MYSQL VARIABLES TO RUNTIME;
 SAVE MYSQL VARIABLES TO DISK;
 INSERT INTO mysql_group_replication_hostgroups (writer_hostgroup, backup_writer_hostgroup, reader_hostgroup, offline_hostgroup, active, max_writers, writer_is_also_reader, max_transactions_behind) VALUES (2, 4, 3, 1, 1, 3, 1, 100);
-INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (2, '10.0.1.5', 3306);
-INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (3, '10.0.1.10', 3306);
+INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (2, '%master_db_private_ip%', 3306);
+INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (3, '%replica_db_private_ip%', 3306);
 LOAD MYSQL SERVERS TO RUNTIME;
 SAVE MYSQL SERVERS TO DISK;
 INSERT INTO mysql_users(username, password, default_hostgroup) VALUES ('cacheuser', 'cachepassword123', 2);
@@ -24,5 +24,5 @@ echo $? > /home/adminuser/init_result.txt
 # 2 for the writer host group
 # 3 for the reader host group
 # 4 for the backup writer host group
-# INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (2, '10.0.1.5', 3306);
-# INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (3, '10.0.1.10', 3306);
+# INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (2, '%master_db_private_ip%', 3306);
+# INSERT INTO mysql_servers(hostgroup_id, hostname, port) VALUES (3, '%replica_db_private_ip%', 3306);

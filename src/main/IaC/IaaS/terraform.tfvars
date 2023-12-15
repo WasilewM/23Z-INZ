@@ -4,6 +4,7 @@ resource_group_name      = "%resource_group_name%"
 resource_group_location  = "%resource_group_location%"
 observability_private_ip = "%observability_private_ip%"
 nginx_private_ip         = "%nginx_private_ip%"
+proxysql_private_ip      = "%proxysql_private_ip%"
 
 server_app_vms = {
   %server_private_ip%

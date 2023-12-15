@@ -16,6 +16,7 @@ if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
 
     echo "-----------------------------------------------------"
     echo "Restoring original files"
+    cp main.tf.backup main.tf
     mv terraform.tfvars.backup terraform.tfvars
     mv customdata_db.tpl.backup customdata_db.tpl
     mv customdata_db_replica.tpl.backup customdata_db_replica.tpl

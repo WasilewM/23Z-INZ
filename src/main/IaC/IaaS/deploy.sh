@@ -2,6 +2,7 @@
 
 echo "-----------------------------------------------------"
 echo "Creating copies of files that need to be changed"
+cp main.tf main.tf.backup
 cp terraform.tfvars terraform.tfvars.backup
 cp customdata_db.tpl customdata_db.tpl.backup
 cp customdata_db_replica.tpl customdata_db_replica.tpl.backup
@@ -20,6 +21,7 @@ sed -i "s|%resource_group_name%|$RESOURCE_GROUP_NAME|g" -i ./terraform.tfvars
 sed -i "s|%resource_group_location%|$RESOURCE_GROUP_LOCATION|g" -i ./terraform.tfvars
 sed -i "s|%observability_private_ip%|$VM_OBSERVABILITY_PRIVATE_IP|g" -i ./terraform.tfvars
 sed -i "s|%nginx_private_ip%|$VM_NGINX_PRIVATE_IP|g" -i ./terraform.tfvars
+sed -i "s|%proxysql_private_ip%|$VM_PROXYSQL_PRIVATE_IP|g" -i ./terraform.tfvars
 
 # create a configuration block of all server VMs
 block_string=""
@@ -104,11 +106,20 @@ for ip in "${VM_SERVER_PRIVATE_IP[@]}"; do
 done
 sed -i "s|%server_private_ip%|$servers_string|g" -i ./customdata_observability.tpl
 
+# customdata_proxysql.tpl
+if [ ! -z "$VM_PROXYSQL_PRIVATE_IP" ]; then
+  echo "VM_PROXYSQL_PRIVATE_IP set tuo $VM_PROXYSQL_PRIVATE_IP. Configuring proxysql"
+  sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./customdata_proxysql.tpl
+  sed -i "s|%replica_db_private_ip%|$VM_REPLICA_DB_PRIVATE_IP|g" -i ./customdata_proxysql.tpl
+  ./add_proxysql_to_terraform.sh
+else
+  echo "VM_PROXYSQL_PRIVATE_IP is empty or not set. Proceeding without proxysql"
+fi
+
 # customdata_server_app.tpl
 sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./customdata_server_app.tpl
 sed -i "s|%mysql_admin_user%|$MYSQL_ADMIN_USER|g" -i ./customdata_server_app.tpl
 sed -i "s|%mysql_admin_password%|$MYSQL_ADMIN_PASSWORD|g" -i ./customdata_server_app.tpl
-
 
 if [ $? == 1 ]; then
     exit 1
