@@ -1,4 +1,4 @@
-CREATE USER IF NOT EXISTS '%db_user%'@'%' IDENTIFIED BY '%db_password%';
+CREATE USER IF NOT EXISTS '%db_user%'@'%' IDENTIFIED WITH mysql_native_password BY '%db_password%';
 
 CREATE DATABASE IF NOT EXISTS cache;
 
