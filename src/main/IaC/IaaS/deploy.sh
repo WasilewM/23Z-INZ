@@ -117,9 +117,16 @@ else
 fi
 
 # customdata_server_app.tpl
-sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./customdata_server_app.tpl
-sed -i "s|%mysql_admin_user%|$MYSQL_ADMIN_USER|g" -i ./customdata_server_app.tpl
-sed -i "s|%mysql_admin_password%|$MYSQL_ADMIN_PASSWORD|g" -i ./customdata_server_app.tpl
+if [ -z "$VM_PROXYSQL_PRIVATE_IP" ]; then
+  sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./customdata_server_app.tpl
+  sed -i "s|%mysql_admin_user%|$MYSQL_ADMIN_USER|g" -i ./customdata_server_app.tpl
+  sed -i "s|%mysql_admin_password%|$MYSQL_ADMIN_PASSWORD|g" -i ./customdata_server_app.tpl
+else
+  sed -i "s|%master_db_private_ip%|$VM_PROXYSQL_PRIVATE_IP|g" -i ./customdata_server_app.tpl
+  sed -i "s|3306|6033|g" -i ./customdata_server_app.tpl
+  sed -i "s|%mysql_admin_user%|cacheuser|g" -i ./customdata_server_app.tpl
+  sed -i "s|%mysql_admin_password%|cachepassword123|g" -i ./customdata_server_app.tpl
+fi
 
 if [ $? == 1 ]; then
     exit 1

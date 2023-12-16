@@ -1,11 +1,11 @@
 #!/bin/bash
-curl -OL https://github.com/sysown/proxysql/releases/download/v2.4.2/proxysql_2.4.2-ubuntu20_amd64.deb
+curl -OL https://github.com/sysown/proxysql/releases/download/v2.4.8/proxysql_2.4.8-dbg-ubuntu22_amd64.deb
 sudo dpkg -i proxysql_*
 sudo apt-get update -y
 sudo apt-get install proxysql mysql-client -y
 sudo systemctl start proxysql
 
-sleep 10 # wait for the proxysql and mysql to start up
+sleep 240 # wait for the proxysql and mysql and DB VMs to start up
 echo "UPDATE global_variables SET variable_value='monitor' WHERE variable_name='monitor';
 LOAD MYSQL VARIABLES TO RUNTIME;
 SAVE MYSQL VARIABLES TO DISK;

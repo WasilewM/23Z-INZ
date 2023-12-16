@@ -211,7 +211,7 @@ resource "azurerm_linux_virtual_machine" "iaas-vm-server-app" {
   admin_username        = var.admin_username
   network_interface_ids = [azurerm_network_interface.iaas-nic-server-app[each.key].id]
 
-  custom_data = filebase64("customdata_server_app.tpl")
+#  custom_data = filebase64("customdata_server_app.tpl")
 
   admin_ssh_key {
     username   = var.admin_username

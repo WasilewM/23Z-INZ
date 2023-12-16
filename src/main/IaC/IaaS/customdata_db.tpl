@@ -42,5 +42,6 @@ FLUSH PRIVILEGES;
 CREATE USER 'cacheuser'@'%' IDENTIFIED WITH mysql_native_password BY 'cachepassword123';
 GRANT ALL PRIVILEGES on cache.* to 'cacheuser'@'%';
 GRANT ALL PRIVILEGES on cache.* to 'cacheuser'@'iaas-vm-proxysql.internal.cloudapp.net';
+GRANT ALL PRIVILEGES on cache.* to 'worker'@'10.0.1.4';
 FLUSH PRIVILEGES;
 EOF

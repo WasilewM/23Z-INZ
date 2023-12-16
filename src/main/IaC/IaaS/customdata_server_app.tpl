@@ -9,4 +9,5 @@ cd 23Z-INZ &&
 sudo sed -i "s|%datasource_url%|jdbc:mysql://%master_db_private_ip%:3306/cache|g" -i ./src/main/resources/application.properties &&
 sudo sed -i "s|%datasource_username%|%mysql_admin_user%|g" -i ./src/main/resources/application.properties &&
 sudo sed -i "s|%datasource_password%|%mysql_admin_password%|g" -i ./src/main/resources/application.properties &&
+echo $? > /home/customdata/result.txt
 sudo mvn spring-boot:run
