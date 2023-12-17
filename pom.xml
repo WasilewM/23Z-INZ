@@ -14,6 +14,8 @@
     <description>inzynierka_spring</description>
     <properties>
         <java.version>17</java.version> <!-- Downgraded to Java 17 because the Azure App service does not support Java 19 (as of 22nd November 2023) -->
+        <docker.image.prefix>akstestregistry.azurecr.io</docker.image.prefix>
+        <jib-maven-plugin.version>3.4.0</jib-maven-plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -138,6 +140,19 @@
                             </resource>
                         </resources>
                     </deployment>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>jib-maven-plugin</artifactId>
+                <groupId>com.google.cloud.tools</groupId>
+                <version>${jib-maven-plugin.version}</version>
+                <configuration>
+                    <from>
+                        <image>mcr.microsoft.com/java/jdk:17-zulu-alpine</image>
+                    </from>
+                    <to>
+                        <image>${docker.image.prefix}/${project.artifactId}</image>
+                    </to>
                 </configuration>
             </plugin>
         </plugins>
