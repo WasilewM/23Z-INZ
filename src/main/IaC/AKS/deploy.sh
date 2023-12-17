@@ -46,5 +46,35 @@ az acr create \
   --name "$REGISTRY_NAME" \
   --sku Basic
 
+echo "-----------------------------------------------------"
+echo "Pushing the app to the Azure Container Registry"
 az config set defaults.acr="$REGISTRY_NAME"
 az acr login && mvn compile jib:build
+
+echo "-----------------------------------------------------"
+echo "Creating subnet for AKS"
+az network vnet subnet create \
+  --resource-group "$RESOURCE_GROUP_NAME" \
+  --vnet-name aks-vnet-mysql \
+  --name aks-subnet-aks \
+  --address-prefixes 10.25.2.0/24
+
+echo "-----------------------------------------------------"
+echo "Storing AKS subnet ID"
+AKS_SUBNET_ID=$(az network vnet subnet show --resource-group "$RESOURCE_GROUP_NAME" --vnet-name aks-vnet-mysql --name aks-subnet-aks --query id -o tsv)
+
+echo "-----------------------------------------------------"
+echo "Creating AKS cluster"
+az aks create \
+  --resource-group "$RESOURCE_GROUP_NAME" \
+  --name aks-cluster \
+  --network-plugin azure \
+  --service-cidr 10.0.0.0/16 \
+  --dns-service-ip 10.0.0.10 \
+  --docker-bridge-address 172.17.0.1/16 \
+  --vnet-subnet-id "$AKS_SUBNET_ID" \
+  --attach-acr "$REGISTRY_NAME" \
+  --dns-name-prefix aks-cluster \
+  --generate-ssh-keys \
+  --tier free \
+  --node-vm-size Standard_B1s
