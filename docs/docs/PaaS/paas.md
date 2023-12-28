@@ -11,6 +11,17 @@
     ```
     This will redirect us to a browser to confirm the identity.
 
+!!! Warning
+    Before running any script we need to make sure that the line separators of files with extensions `.tpl` and `.sh` match our system requirements. Example is provided below:   
+    ```
+    $ file deploy.sh
+    deploy.sh: Bourne-Again shell script, ASCII text executable, with CRLF line terminators
+    $ sed -i 's/\r$//' deploy.sh
+    $ file deploy.sh
+    deploy.sh: Bourne-Again shell script, ASCII text executable
+    ```
+    Alternatively, line separators can be configured in our IDE like in [IntelliJ IDEA](https://www.jetbrains.com/help/idea/configuring-line-endings-and-line-separators.html).  
+
 ### How to create a 1-1 model?
 Let's assume that we start in the root directory of the project. In order to create a model go to the `src/main/IaC/PaaS` directory:  
 ```shell
