@@ -22,6 +22,10 @@
     ```
     Alternatively, line separators can be configured in our IDE like in [IntelliJ IDEA](https://www.jetbrains.com/help/idea/configuring-line-endings-and-line-separators.html).  
 
+
+!!! Tip  
+    Both `IaaS` deployment and [`VirtualBox`](../VirtualBox/virtualbox.md) deployment use virtual machines (VMs); therefore, some tips / instructions may apply to both environments.
+
 ### How to create a 1-1 model?
 Let's assume that we start in the root directory of the project. In order to create a model go to the `src/main/IaC/IaaS` directory:
 ```shell

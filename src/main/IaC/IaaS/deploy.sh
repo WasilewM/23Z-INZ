@@ -61,8 +61,8 @@ sed -i "s|%db_ip%|$db_block_string|g" -i ./terraform.tfvars
 # customdata_db.tpl
 sed -i "s|%mysql_admin_user%|$MYSQL_ADMIN_USER|g" -i ./customdata_db.tpl
 sed -i "s|%mysql_admin_password%|$MYSQL_ADMIN_PASSWORD|g" -i ./customdata_db.tpl
-sed -i "s|mysql_replication_user=|mysql_replication_user=$MYSQL_REPLICATION_USER|g" -i ./customdata_db.tpl
-sed -i "s|mysql_replication_password=|mysql_replication_password=$MYSQL_REPLICATION_PASSWORD|g" -i ./customdata_db.tpl
+sed -i "s|mysql_replication_user=\"\"|mysql_replication_user=$MYSQL_REPLICATION_USER|g" -i ./customdata_db.tpl
+sed -i "s|mysql_replication_password=\"\"|mysql_replication_password=$MYSQL_REPLICATION_PASSWORD|g" -i ./customdata_db.tpl
 
 # customdata_db_replication.tpl
 sed -i "s|%master_db_private_ip%|$VM_MASTER_DB_PRIVATE_IP|g" -i ./customdata_db_replica.tpl
