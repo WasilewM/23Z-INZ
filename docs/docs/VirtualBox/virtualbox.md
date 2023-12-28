@@ -58,7 +58,7 @@ Below is an explanation of each variable:
 - `VM_NGINX_IP` - an IP that we have defined for the `host-only` network interface in the nginx VM  
 - `NGINX_LOAD_BALANCING_STRATEGY` - a strategy for load balancing. In 1-1 model it is can be left empty. More on the load balancing strategies can be found [here](#how-to-choose-load-balancing-strategy)  
 
-To sum up all the above our `variables.sh` file for 1-1 model should look like this:
+To sum up all the above our `variables.sh` file for the 1-1 model should look like this:
 ```shell
 #!/bin/bash
 
@@ -107,8 +107,85 @@ We might be asked to type password for the root user to authorize the installati
     4. VM for the nginx load balancer  
 
 ### How to create a n-1 model?
+The steps to create a n-1 model are almost the same as the ones executed previously for the 1-1 model.  
+The only difference is the number of IP addresses used for `VM_SERVER_IP` variable. Here we should specify the IPs that we have used to configure the `host-only` network interfaces of the server VMs.  
+
+To sum up all the above our `variables.sh` file for the n-1 model should look like this:
+```shell
+#!/bin/bash
+
+export MYSQL_ADMIN_USER=worker
+export MYSQL_ADMIN_PASSWORD=wo^Ker_123
+export MYSQL_REPLICATION_USER=
+export MYSQL_REPLICATION_PASSWORD=
+export VM_SERVER_IP=(192.168.56.41 192.168.56.42)
+export VM_MASTER_DB_IP=192.168.56.30
+export VM_REPLICA_DB_IP=
+export VM_OBSERVABILITY_IP=192.168.56.50
+export VM_NGINX_IP=192.168.56.40
+export NGINX_LOAD_BALANCING_STRATEGY=
+```
+Now we can run the `load_variables.sh` script to parametrize the configuration scripts for VMs:
+```shell
+./load_varaibles.sh
+```
+And we expect an output similar to this one:
+```shell
+-----------------------------------------------------
+Creating copies of files that need to be changed     
+-----------------------------------------------------
+Reading variables.sh
+VM_REPLICA_DB_IP is empty or not set. customdata_db_replica.sh will not be parametrized
+NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strategy "round robin"
+-----------------------------------------------------
+The files have been parametrized 
+```
 
 ### How to create a master-slave database configuration?
+As mentioned in the variables description earlier, we will need to specify values for 3 variables that we've left empty until now:  
+- `MYSQL_REPLICATION_USER` - username for the replication user  
+- `MYSQL_REPLICATION_PASSWORD` - password for the `MYSQL_REPLICATION_USER`  
+- `VM_REPLICA_DB_IP` - an IP that we have defined for the `host-only` network interface in the replica DB VM  
+The slave database can be configured for the 1-1 model as well as for the n-1 model; therefore, depending on our choices the `variables.sh` files should look like this for 1-1 model (or actually the 1-2 model, because we are adding a second DB)
+```shell
+#!/bin/bash
+
+export MYSQL_ADMIN_USER=worker
+export MYSQL_ADMIN_PASSWORD=wo^Ker_123
+export MYSQL_REPLICATION_USER=repl
+export MYSQL_REPLICATION_PASSWORD=Repl#789
+export VM_SERVER_IP=(192.168.56.41)
+export VM_MASTER_DB_IP=192.168.56.30
+export VM_REPLICA_DB_IP=192.168.56.31
+export VM_OBSERVABILITY_IP=192.168.56.50
+export VM_NGINX_IP=192.168.56.40
+export NGINX_LOAD_BALANCING_STRATEGY=
+```
+Or like this for the n-1 model (or actually n-2, because we are adding a second DB):
+```shell
+#!/bin/bash
+
+export MYSQL_ADMIN_USER=worker
+export MYSQL_ADMIN_PASSWORD=wo^Ker_123
+export MYSQL_REPLICATION_USER=repl
+export MYSQL_REPLICATION_PASSWORD=Repl#789
+export VM_SERVER_IP=(192.168.56.41 192.168.56.42)
+export VM_MASTER_DB_IP=192.168.56.30
+export VM_REPLICA_DB_IP=192.168.56.31
+export VM_OBSERVABILITY_IP=192.168.56.50
+export VM_NGINX_IP=192.168.56.40
+export NGINX_LOAD_BALANCING_STRATEGY=
+```
+And we expect an output similar to this one:  
+```shell
+-----------------------------------------------------
+Creating copies of files that need to be changed     
+-----------------------------------------------------
+Reading variables.sh
+NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strategy "round robin"
+-----------------------------------------------------
+The files have been parametrized
+```
 
 ### How to choose load balancing strategy?
 #### What load balancing strategies are available?
@@ -123,6 +200,9 @@ In this environment we can specify which load balancing strategy do we want to u
 
 !!! quote
     `IP Hash` – The server to which a request is sent is determined from the client IP address. In this case, either the first three octets of the IPv4 address or the whole IPv6 address are used to calculate the hash value. The method guarantees that requests from the same address get to the same server unless it is not available.
+
+!!! Tip
+    Load balancing configuration looks the same as for the `IaaS` deployment so for more information have a look [here](../IaaS/iaas.md#how-to-choose-load-balancing-strategy).
 
 ### How to restore original files?
 In order to restore original files we can simply use the script `restore_original_files.sh`:  
