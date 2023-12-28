@@ -6,6 +6,7 @@ theme:
 nav:
   - Home: index.md
   - Test service: ./server_app/test_service.md
+  - VirtualBox: ./VirtualBox/virtualbox.md
   - IaaS: ./IaaS/iaas.md
   - PaaS: ./PaaS/paas.md
   - Requests generator: ./requests_generator/requests_generator.md
