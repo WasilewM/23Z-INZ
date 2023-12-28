@@ -7,9 +7,6 @@ cd /home/customdata
 git clone https://github.com/WasilewM/23Z-INZ/
 cd 23Z-INZ
 cd src/main/db/mysql
-sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get install -y mysql-server
 echo "[mysqld]" | sudo tee -a /etc/mysql/my.cnf
 echo "port=3306" | sudo tee -a /etc/mysql/my.cnf
 echo "bind-address = 0.0.0.0" | sudo tee -a /etc/mysql/my.cnf
