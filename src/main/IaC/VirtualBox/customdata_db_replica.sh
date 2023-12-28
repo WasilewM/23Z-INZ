@@ -2,8 +2,6 @@
 sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get install -y mysql-server
-sudo mkdir -p /home/customdata
-cd /home/customdata
 git clone https://github.com/WasilewM/23Z-INZ/
 cd 23Z-INZ
 cd src/main/db/mysql
