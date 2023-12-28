@@ -1,6 +1,8 @@
 # VirtualBox
 
 ## About
+This section describes steps required to configure the `on premise` test environment which is set up on virtual machines.  
+Solutions provided below might be useful to quickly set up and test the application without the need to access the cloud resources.
 
 ## User guide
 
