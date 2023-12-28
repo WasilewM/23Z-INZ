@@ -15,8 +15,8 @@ echo "Reading variables.sh"
 # customdata_db.sh
 sed -i "s|%mysql_admin_user%|$MYSQL_ADMIN_USER|g" -i ./customdata_db.sh
 sed -i "s|%mysql_admin_password%|$MYSQL_ADMIN_PASSWORD|g" -i ./customdata_db.sh
-sed -i "s|mysql_replication_user=|mysql_replication_user=$MYSQL_REPLICATION_USER|g" -i ./customdata_db.sh
-sed -i "s|mysql_replication_password=|mysql_replication_password=$MYSQL_REPLICATION_PASSWORD|g" -i ./customdata_db.sh
+sed -i "s|mysql_replication_user=\"\"|mysql_replication_user=$MYSQL_REPLICATION_USER|g" -i ./customdata_db.sh
+sed -i "s|mysql_replication_password=\"\"|mysql_replication_password=$MYSQL_REPLICATION_PASSWORD|g" -i ./customdata_db.sh
 
 # customdata_db_replication.sh
 if [ ! -z "$VM_REPLICA_DB_IP" ]; then
