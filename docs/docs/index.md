@@ -3,8 +3,8 @@
 Here you will find some basic information about the docs structure.
 
 ## Structure
-Sections [Test service](./server_app/test_service.md), [IaaS](./IaaS/iaas.md), [PaaS](./PaaS/paas.md) and [Requests generator](./requests_generator/requests_generator.md) contain information about separate aspects of the test environment.  
-Additionally, [IaaS](./IaaS/iaas.md) and [PaaS](./PaaS/paas.md) sections have `User guide` sections.  
+Sections [Test service](./server_app/test_service.md), [VirtualBox](./VirtualBox/virtualbox.md), [IaaS](./IaaS/iaas.md), [PaaS](./PaaS/paas.md), [Requests generator](./requests_generator/requests_generator.md) and [Observability](./observability/observability.md) contain information about separate aspects of the test environment.  
+Additionally, [VirtualBox](./VirtualBox/virtualbox.md), [IaaS](./IaaS/iaas.md) and [PaaS](./PaaS/paas.md) sections have `User guide` sections and [Resources](./resources.md) section contains links do external resources that might be helpful.  
 
 ## Shortcuts
 Following shortcuts can be used everywhere on the documentation website:  
