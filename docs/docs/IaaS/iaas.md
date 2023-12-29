@@ -120,7 +120,7 @@ The steps to create a n-1 model are almost the same as the ones executed previou
 The only difference is the number of IP addresses used for `VM_SERVER_PRIVATE_IP` variable. Here we should specify the internal IPs for the VMs we want to create, for example `("10.0.1.4" "10.0.1.8")` or `("10.0.1.4" "10.0.1.8" "10.0.1.9")`.  
 
 !!! Tip
-    Before created numerous VMs we should check our resource quotas to make sure that we are allowed to creat the desired environment. We need to pay attention to the following quotas:  
+    Before creating numerous VMs we should check our resource quotas to make sure that we are allowed to creat the desired environment. We need to pay attention to the following quotas:  
     - `Total Regional vCPUs` - represents total number of `vCPUs` that we can request  
     - `Standard BS Family vCPUs` - represents the number of `vCPUs` from `Standard BS Family` that we can request. VMs for the database and the nginx load balancer use this `vCPUs`  
     - `Standard Av2 Family vCPUs` - represents the number of `vCPUs` from `Standard Av2 Family` that we can request. VMs for the server application use this `vCPUs`  
