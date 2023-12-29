@@ -208,7 +208,27 @@ NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strat
 The files have been parametrized 
 ```
 
+Now our files are parametrized. In order to configure the VMs we need to copy them to the appropriate VMs (`customdata_db.sh` to the DB VM, `customdata_nginx.sh` to the nginx load balancer VM, etc.). We need to make sure that the scripts are executable - command below will allow us to execute the configuration script:
+```shell
+chmod +x customdata_db.sh
+```
+After running configuration script:
+```shell
+./customdata_db.sh
+```
+We might be asked to type password for the root user to authorize the installation.
+
+!!! Warning
+    The order in which we should configure our VMs is presented below:  
+    1. VM for the database  
+    2. all VMs for the server app  
+    3. VM for observability  
+    4. VM for the nginx load balancer
+
 ### How to create a master-slave database configuration?
+!!! Note
+    In the provided scripts the `slave` database acts as a replication database. It replicates data form the `master` database, but is not being accessed by the server app instances.
+
 As mentioned in the variables description earlier, we will need to specify values for 3 variables that we've left empty until now:  
 - `MYSQL_REPLICATION_USER` - username for the replication user  
 - `MYSQL_REPLICATION_PASSWORD` - password for the `MYSQL_REPLICATION_USER`  
@@ -253,6 +273,24 @@ NGINX_LOAD_BALANCING_STRATEGY is empty or not set. Proceeding with default strat
 -----------------------------------------------------
 The files have been parametrized
 ```
+
+Now our files are parametrized. In order to configure the VMs we need to copy them to the appropriate VMs (`customdata_db.sh` to the DB VM, `customdata_nginx.sh` to the nginx load balancer VM, etc.). We need to make sure that the scripts are executable - command below will allow us to execute the configuration script:
+```shell
+chmod +x customdata_db.sh
+```
+After running configuration script:
+```shell
+./customdata_db.sh
+```
+We might be asked to type password for the root user to authorize the installation.
+
+!!! Warning
+    The order in which we should configure our VMs is presented below:  
+    1. VM for the master database  
+    2. VM for the slave database  
+    3. all VMs for the server app  
+    4. VM for observability  
+    5. VM for the nginx load balancer
 
 ### How to choose load balancing strategy?
 #### What load balancing strategies are available?
