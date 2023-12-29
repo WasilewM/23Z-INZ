@@ -1,6 +1,8 @@
 # Infrastructure as a Service
 
 ## About
+This section describes steps required to configure the `IaaS` (Infrastructure as a Service) test environment. This environment is set up in Microsoft Azure. 
+More information about `IaaS` in Microsoft Azure cloud can be found [here](https://azure.microsoft.com/en-us/solutions/azure-iaas/?ef_id=_k_Cj0KCQiA1rSsBhDHARIsANB4EJauXG98uWXDTN4LX1qbU2wN7bukTlcml_efIeGJ99zwDeAcKKoYtNIaAkcREALw_wcB_k_&OCID=AIDcmm4rphvbww_SEM__k_Cj0KCQiA1rSsBhDHARIsANB4EJauXG98uWXDTN4LX1qbU2wN7bukTlcml_efIeGJ99zwDeAcKKoYtNIaAkcREALw_wcB_k_&gad_source=1&gclid=Cj0KCQiA1rSsBhDHARIsANB4EJauXG98uWXDTN4LX1qbU2wN7bukTlcml_efIeGJ99zwDeAcKKoYtNIaAkcREALw_wcB#overview).
 
 ## User guide
 
@@ -66,7 +68,7 @@ Below is an explanation of each variable:
 - `VM_NGINX_PRIVATE_IP` - a private IP for the virtual machine for load balancer. The IP has to belong to the IP range of the `"10.0.1.0/26"` subnet  
 - `NGINX_LOAD_BALANCING_STRATEGY` - a strategy for load balancing. In 1-1 model it is can be left empty. More on the load balancing strategies can be found [here](#how-to-choose-load-balancing-strategy)  
 
-To sum up all the above our `variables.sh` file for 1-1 model should look like this:
+To sum up all the above our `variables.sh` file for the 1-1 model should look like this:
 ```bash
 #!/bin/bash
 
@@ -114,18 +116,18 @@ Terraform logs have been skipped in the example in order not to reveal any sensi
 When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to create a n-1 model?
-The steps to create a n-1 model are almost the same as the ones executed previously for 1-1 model.  
+The steps to create a n-1 model are almost the same as the ones executed previously for the 1-1 model.  
 The only difference is the number of IP addresses used for `VM_SERVER_PRIVATE_IP` variable. Here we should specify the internal IPs for the VMs we want to create, for example `("10.0.1.4" "10.0.1.8")` or `("10.0.1.4" "10.0.1.8" "10.0.1.9")`.  
 
 !!! Tip
-    Before created numerous VMs we should check our resource quotas to make sure that we are allowed to creat the desired environment. We need to pay attention to the following quotas:  
+    Before creating numerous VMs we should check our resource quotas to make sure that we are allowed to creat the desired environment. We need to pay attention to the following quotas:  
     - `Total Regional vCPUs` - represents total number of `vCPUs` that we can request  
     - `Standard BS Family vCPUs` - represents the number of `vCPUs` from `Standard BS Family` that we can request. VMs for the database and the nginx load balancer use this `vCPUs`  
     - `Standard Av2 Family vCPUs` - represents the number of `vCPUs` from `Standard Av2 Family` that we can request. VMs for the server application use this `vCPUs`  
     More on quotas topic can be found [here](https://learn.microsoft.com/en-us/azure/quotas/quotas-overview).  
     More on VM families can be found [here](https://azure.microsoft.com/en-us/pricing/details/virtual-machines/series/).  
 
-To sum up all the above our `variables.sh` file for 1-n model should look like this:
+To sum up all the above our `variables.sh` file for the n-1 model should look like this:
 ```bash
 #!/bin/bash
 
@@ -173,6 +175,9 @@ Terraform logs have been skipped in the example in order not to reveal any sensi
 When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to create a master-slave database configuration?
+!!! Note
+    In the provided scripts the `slave` database acts as a replication database. It replicates data form the `master` database, but is not being accessed by the server app instances.
+
 As mentioned in the variables description earlier, we will need to specify values for 3 variables that we've left empty until now:  
 - `MYSQL_REPLICATION_USER` - username for the replication user  
 - `MYSQL_REPLICATION_PASSWORD` - password for the `MYSQL_REPLICATION_USER`  

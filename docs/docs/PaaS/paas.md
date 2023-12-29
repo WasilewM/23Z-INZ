@@ -1,6 +1,9 @@
 # Platform as a Service
 
 ## About
+This section describes steps required to configure the `PaaS` (Platform as a Service) test environment. This environment is set up in Microsoft Azure and uses `Azure Spring Apps`. 
+More information about `PaaS` in Microsoft Azure cloud can be found [here](https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-paas). 
+More information about `Azure Spring Apps` can be found [here](https://azure.microsoft.com/en-us/products/spring-apps). 
 
 ## User guide
 
