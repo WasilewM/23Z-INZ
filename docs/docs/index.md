@@ -16,3 +16,6 @@ Following shortcuts can be used everywhere on the documentation website:
 Before reading sections [IaaS](./IaaS/iaas.md) and [PaaS](./PaaS/paas.md), please read provided articles:  
 - [Install the Azure CLI on Linux](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt)  
 - [Get started with Azure CLI](https://learn.microsoft.com/en-us/cli/azure/get-started-with-azure-cli)  
+
+## Repositories
+[Here](https://github.com/WasilewM/23Z-INZ) is a link do the main repository on GitHub and [here](https://github.com/WasilewM/http-requests-generator) is a link to the repository with the provided [requests generator](./requests_generator/requests_generator.md).
