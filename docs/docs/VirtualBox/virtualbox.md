@@ -25,6 +25,73 @@ Solutions provided below might be useful to quickly set up and test the applicat
     Both `VirtualBox` deployment and [`IaaS`](../IaaS/iaas.md) deployment use virtual machines (VMs); therefore, some tips / instructions may apply to both environments. 
 
 ### How to configure networking?
+By default, `VirtualBox` add a single network interface to newly created VM - `NAT` (`Network Address Transaltion`) - which allows the VM to communicate with the Internet. If we ony want to test one thing on the VM, then this single network interface can probably be all that we need. However, when we want multiple VMs to communicate with each other, then we need to add another network interface.  
+We can choose from several options which are described [here](https://www.virtualbox.org/manual/ch06.html). A table with the most important characteristics is presented below:
+
+| Mode       | VM -> Host | VM <- Host   | VM1 <-> VM2 | VM -> Net/LAN | VM <- Net/LAN |
+|------------|------------|--------------|-------------|---------------|---------------|
+| Host-only  | +          | +            | +           | -             | -             |
+| Internal   | -          | -            | +           | -             | -             |
+| Bridged    | +          | +            | +           | +             | +             |
+| NAT        | +          | Port forward | -           | +             | Port forward  |
+| NATservice | +          | Port forward | +           | +             | Port forward  |
+
+For more information about `Port forward` in `NAT` please refer to [this article](https://www.virtualbox.org/manual/ch06.html#natforward) and for more information about `Port forward` in `NATservice` please refer to [this article](https://www.virtualbox.org/manual/ch06.html#network_nat_service).  
+The table above show that the `Bridged` mode can handle all types of communication; however, this type of network interface requires a static IP address in our network, so it might not always be the best option.  
+The `Host-only` network interface will be sufficient for this tutorial and according to the documentation provided earlier (and [here](https://www.virtualbox.org/manual/ch06.html)):
+
+!!! Quote
+    On Linux, macOS and Solaris Oracle VM VirtualBox will only allow IP addresses in 192.168.56.0/21 range to be assigned to host-only adapters. For IPv6 only link-local addresses are allowed. If other ranges are desired, they can be enabled by creating /etc/vbox/networks.conf and specifying allowed ranges there.
+
+In order to add the second network interface, we can follow the steps from the documentation or from the screenshots below. Buttons clicked in each step are marked with the red underscore:  
+![](./img/networking-01.png)
+![](./img/networking-02.png)
+![](./img/networking-03.png)
+![](./img/networking-04.png)
+Now we need to accept the changes and start our VM. We can check available network interfaces by running the command:  
+```shell
+ip a
+```
+And the output should be similar to this one:
+![](./img/networking-05.png)
+We can see that the first network interface (`NAT`) is configured, but the second one (`host-only`) is not. In linux `Ubuntu 22.04` we can change the network interfaces configuration in file `/etc/netplan/00-installer-config.yaml` by running the command:
+```shell
+sudo vi /etc/netplan/00-installer-config.yaml
+```
+By default, this file looks like this:  
+```shell
+# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    enp0s3:
+      dhcp4: true
+  version: 2
+```
+We need to add an entry about the second network interface (`enp0s8` is shown on the previous screenshot). We would like to disable the `dhcp4` for this interface and add an IP address, for example `192.168.56.50/24`:
+```shell
+# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    enp0s3:
+      dhcp4: true
+    enp0s8:
+      dhcp4: false
+      addresses: [192.168.56.50/24]
+  version: 2
+```
+Now we need to save changes. To reload the configuration we can type:
+```shell
+sudo netplan apply
+```
+And type:
+```shell
+ip a
+```
+Once again to check the results. If everything is fine, then we should see and output similar to this one:  
+![](./img/networking-06.png)
+We need to check here that both network interfaces are `UP`:
+![](./img/networking-07.png)
+And we are ready to go.
 
 ### How to create a 1-1 model?
 Let's assume that we start in the root directory of the project. In order to create a model go to the `src/main/IaC/VirtualBox` directory:
