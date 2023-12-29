@@ -175,6 +175,9 @@ Terraform logs have been skipped in the example in order not to reveal any sensi
 When the environment is no longer needed we can destroy it by following the steps from [this paragraph](#how-to-clean-up-the-environment).
 
 ### How to create a master-slave database configuration?
+!!! Note
+    In the provided scripts the `slave` database acts as a replication database. It replicates data form the `master` database, but is not being accessed by the server app instances.
+
 As mentioned in the variables description earlier, we will need to specify values for 3 variables that we've left empty until now:  
 - `MYSQL_REPLICATION_USER` - username for the replication user  
 - `MYSQL_REPLICATION_PASSWORD` - password for the `MYSQL_REPLICATION_USER`  
