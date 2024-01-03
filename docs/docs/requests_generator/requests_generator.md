@@ -16,7 +16,7 @@ python3 requests_generator.py -h
 ```
 We should receive following output:  
 ```shell
-usage: http-requests-generator [-h] [-l LOWER_LIMIT] [-u UPPER_LIMIT] [-m {generate,g,generate-and-save,gs,generate-and-run,gr,load-and-run,lr}] [-o OUTPUT] [-i INPUT] url requests_num timespan
+usage: http-requests-generator [-h] [-l LOWER_LIMIT] [-u UPPER_LIMIT] [-m {generate,g,generate-and-save,gs,generate-and-run,gr,load-and-run,lr}] [-o OUTPUT] [-i INPUT] [--csv-output CSV_OUTPUT] url requests_num timespan
 
 Generates http requests for given URL with random numbers appended at the end of the URL
 
@@ -34,9 +34,11 @@ options:
   -m {generate,g,generate-and-save,gs,generate-and-run,gr,load-and-run,lr}, --mode {generate,g,generate-and-save,gs,generate-and-run,gr,load-and-run,lr}
                         Mode which should be executed
   -o OUTPUT, --output OUTPUT
-                        Path to file where requests will be saved
+                        Path to the file where requests will be saved
   -i INPUT, --input INPUT
-                        Path to file where requests are stored
+                        Path to the file where requests are stored
+  --csv-output CSV_OUTPUT
+                        Path to the file where response time results will be saved
 ```
 
 ### Available modes
@@ -44,7 +46,7 @@ There are 3 modes implemented:
 - `g` or `generate` flags should be used if we only want to generate a sample of requests and receive them printed in our CLI  
 - `gs` or `generate-and-save` flags should be used if we want to generate a sample of requests and save it into a file without actually running those requests  
 - `gr` or `generate-and-run` flags should be used if we want to generate a sample of requests and immediately run them. This is the default behaviour  
-- `lr` or `load-and-run` flags should be used if we want to load a previously generated sample of requests and run them
+- `lr` or `load-and-run` flags should be used if we want to load a previously generated sample of requests and run them (due to this fact, the `url`, `requests_num` and `timestamp` arguments' values are omitted during the script execution)
 
 ## User guide
 
