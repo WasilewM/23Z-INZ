@@ -103,6 +103,20 @@ public class NumberFactorizorTest {
         assertEquals(expectedResult, nf.factorize(inputNumber));
     }
 
+
+    @Test
+    public void givenFactorizeMethod_whenCalledWithTypicalNumber_thenListWithValidNumberOfPrimesIsReturned() {
+        // Test case origin: returned array [2, 29, 29, 841] in FactorizationControllerTests
+        NumberFactorizor nf = new NumberFactorizor();
+        int inputNumber = 1682;
+        ArrayList<Integer> expectedResult = new ArrayList<>();
+        expectedResult.add(2);
+        expectedResult.add(29);
+        expectedResult.add(29);
+
+        assertEquals(expectedResult, nf.factorize(inputNumber));
+    }
+
     @Test
     public void givenFactorizeMethod_whenCalledWithBigNumber_thenListWithValidNumberOfPrimesIsReturned() {
         NumberFactorizor nf = new NumberFactorizor();
@@ -112,7 +126,6 @@ public class NumberFactorizorTest {
         expectedResult.add(13);
         expectedResult.add(97);
         expectedResult.add(131);
-        expectedResult.add(169);
 
         assertEquals(expectedResult, nf.factorize(inputNumber));
     }
