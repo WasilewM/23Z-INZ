@@ -22,7 +22,13 @@ public class FactorizationController {
 
 
     @GetMapping("{number}")
-    public Optional<FactorizationResult> getFactorizationResult(@PathVariable int number) {
-        return factorizationService.getFactorizationResultFor(number);
+    public Optional<FactorizationResult> getFactorizationResult(@PathVariable String number) {
+        int parsedNumber;
+        try {
+            parsedNumber = Integer.parseInt(number);
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+        return factorizationService.getFactorizationResultFor(parsedNumber);
     }
 }

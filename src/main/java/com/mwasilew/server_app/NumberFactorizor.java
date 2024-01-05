@@ -32,10 +32,6 @@ public class NumberFactorizor {
         return inputNumber >= 0 && inputNumber <= FACTORIZATION_RANGE;
     }
 
-    private static boolean isPositiveEvenNumber(int inputNumber) {
-        return inputNumber >= 2 && inputNumber % 2 == 0;
-    }
-
     private static boolean isCompositeEvenNumber(int inputNumber) {
         return inputNumber > 2 && inputNumber % 2 == 0;
     }
@@ -48,10 +44,21 @@ public class NumberFactorizor {
             throw new IllegalArgumentException(msg);
         }
 
-        addTwoDivisorForPositiveEvenNumber(inputNumber);
+        if (inputNumber < 2) {
+            return factorizationSolution;
+        }
+
+        while (inputNumber % 2 == 0) {
+            factorizationSolution.add(2);
+            inputNumber /= 2;
+        }
+
         for (int i = 3; i <= inputNumber; i += 2) {
             if (isPrime(i)) {
-                addAllDivisorsOf(inputNumber, i);
+                while (inputNumber % i == 0) {
+                    factorizationSolution.add(i);
+                    inputNumber /= i;
+                }
             }
         }
         return factorizationSolution;
@@ -59,19 +66,5 @@ public class NumberFactorizor {
 
     private void clearPreviousSolution() {
         factorizationSolution.clear();
-    }
-
-    private void addTwoDivisorForPositiveEvenNumber(int inputNumber) {
-        if (isPositiveEvenNumber(inputNumber)) {
-            addAllDivisorsOf(inputNumber, 2);
-        }
-    }
-
-    private void addAllDivisorsOf(int inputNumber, int divisor) {
-        int currentValue = inputNumber;
-        while (currentValue % divisor == 0) {
-            factorizationSolution.add(divisor);
-            currentValue /= divisor;
-        }
     }
 }
