@@ -265,3 +265,6 @@ Sometimes, there might be a problem when connecting to Azure servers or services
     Code: ResourceNotFound
     Message: The Resource 'Microsoft.DBforMySQL/flexibleServers/paas-spring-mysql-db' under resource group 'paas-spring-rg' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
     ```
+
+!!! tip
+    Optionally, changing the variable `RESOURCE_GROUP_NAME` value might solve the issue.
