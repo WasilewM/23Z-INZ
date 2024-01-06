@@ -209,3 +209,62 @@ Restoring original files
 -----------------------------------------------------
 The test environment has been cleaned
 ```
+
+## Troubleshooting
+### Errors during environment setup
+Sometimes, there might be a problem when connecting to Azure servers or services. When this happens during the environment setup, then the environment might not be properly configured or fully functional. In such case, the best option is to destroy and recreate the environment.
+
+??? Example
+    Below is an example (an extract from logs) of a problem that might occur during the environment setup:
+    ```
+    -----------------------------------------------------
+    Creating MySQL Flexible Server
+    and adding firewall rule to allow current client IP to connect
+    Checking the existence of the resource group 'paas-spring-rg'...
+    Resource group 'paas-spring-rg' exists ? : True
+    Detected current client IP : A.B.C.D
+    IOPS is 396 which is either your input or free(maximum) IOPS supported for your storage size and SKU.
+    Creating MySQL Server 'paas-spring-mysql-db' in group 'paas-spring-rg'...
+    Your server 'paas-spring-mysql-db' is using sku 'Standard_D2ads_v5' (Paid Tier). Please refer to https://aka.ms/mysql-pricing for pricing details
+    (ServerNameAlreadyExists) Specified server name is already used.
+    Code: ServerNameAlreadyExists
+    Message: Specified server name is already used.
+    -----------------------------------------------------
+    Creating DB schema in MySQL DB
+    mysql: [Warning] Using a password on the command line interface can be insecure.
+    ERROR 2005 (HY000): Unknown MySQL server host 'paas-spring-mysql-db.mysql.database.azure.com' (-2)
+    -----------------------------------------------------
+    Creating connection between Spring App and MySQL DB
+    Connection name is not specified, use generated one: --connection mysqlflexible_0k9gu
+    (TargetResourceNotFound) Execution failed. The Resource 'Microsoft.DBforMySQL/flexibleServers/paas-spring-mysql-db' under resource group 'paas-spring-rg' was not found. For more details please go to https://aka.ms/ARMResourceNotFoun
+    dFix
+    Status: 404 (Not Found)
+    ErrorCode: ResourceNotFound
+    
+    Content:
+    {"error":{"code":"ResourceNotFound","message":"The Resource 'Microsoft.DBforMySQL/flexibleServers/paas-spring-mysql-db' under resource group 'paas-spring-rg' was not found. For more details please go to https://aka.ms/ARMResourceNot
+    FoundFix"}}
+    
+    ...
+    
+    Code: TargetResourceNotFound
+    Message: Execution failed. The Resource 'Microsoft.DBforMySQL/flexibleServers/paas-spring-mysql-db' under resource group 'paas-spring-rg' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
+    Status: 404 (Not Found)
+    ErrorCode: ResourceNotFound
+    
+    Content:
+    {"error":{"code":"ResourceNotFound","message":"The Resource 'Microsoft.DBforMySQL/flexibleServers/paas-spring-mysql-db' under resource group 'paas-spring-rg' was not found. For more details please go to https://aka.ms/ARMResourceNot
+    FoundFix"}}
+    
+    ...
+    
+    -----------------------------------------------------
+    Creating MySQL Flexible Server - Replica DB
+    and adding firewall rule to allow current client IP to connect
+    (ResourceNotFound) The Resource 'Microsoft.DBforMySQL/flexibleServers/paas-spring-mysql-db' under resource group 'paas-spring-rg' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
+    Code: ResourceNotFound
+    Message: The Resource 'Microsoft.DBforMySQL/flexibleServers/paas-spring-mysql-db' under resource group 'paas-spring-rg' was not found. For more details please go to https://aka.ms/ARMResourceNotFoundFix
+    ```
+
+!!! tip
+    Optionally, changing the variable `RESOURCE_GROUP_NAME` value might solve the issue.
