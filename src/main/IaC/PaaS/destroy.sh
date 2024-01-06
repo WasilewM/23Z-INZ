@@ -8,7 +8,7 @@ if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
     echo "Destroying all objects in tested resource group"
     terraform destroy --auto-approve
     . ./variables.sh
-    az group delete --name paas-spring-rg --yes
+    az group delete --name "$RESOURCE_GROUP_NAME" --yes
 
     echo "-----------------------------------------------------"
     echo "Restoring original files"
